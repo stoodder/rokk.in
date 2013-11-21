@@ -7,16 +7,16 @@
 
 Install Ruby
 Install Node.js (http://nodejs.org/)
-`npm install -g grunt-cli`
-`gem install sass`
-`gem install haml`
-`npm install coffee-script`
-`npm install grunt --save-dev`
-`npm install grunt-contrib-coffee --save-dev`
-`npm install grunt-contrib-uglify --save-dev`
-`npm install grunt-contrib-watch --save-dev`
-`npm install grunt-contrib-haml --save-dev`
-`npm install grunt-contrib-sass --save-dev`
+npm install -g grunt-cli
+gem install sass
+gem install haml
+npm install coffee-script
+npm install grunt --save-dev
+npm install grunt-contrib-coffee --save-dev
+npm install grunt-contrib-uglify --save-dev
+npm install grunt-contrib-watch --save-dev
+npm install grunt-contrib-haml --save-dev
+npm install grunt-contrib-sass --save-dev
 
 ###
 module.exports = (grunt) ->
@@ -43,7 +43,7 @@ module.exports = (grunt) ->
 						"private/coffee/models/*.coffee"
 						"private/coffee/collections/*.coffee"
 						"private/web/coffee/views/*.coffee"
-						"private/web/coffee/widgets/*.coffee"
+						"private/web/coffee/bindings/*.coffee"
 						"private/web/coffee/init.coffee"
 					]
 				#END files
@@ -92,7 +92,15 @@ module.exports = (grunt) ->
 
 		'watch':
 			'web_coffee':
-				'files': []
+				'files': [
+					"private/coffee/*.coffee"
+					"private/web/coffee/*.coffee"
+					"private/coffee/models/*.coffee"
+					"private/coffee/collections/*.coffee"
+					"private/web/coffee/views/*.coffee"
+					"private/web/coffee/bindings/*.coffee"
+					"private/web/coffee/init.coffee"
+				]
 
 				'tasks': ['coffee:web', 'uglify:web']
 			#END watch:web_coffee
@@ -104,7 +112,7 @@ module.exports = (grunt) ->
 			#END watch:web_sass
 
 			'web_haml':
-				'files': []
+				'files': ["private/web/haml/*.haml"]
 
 				'tasks': ['haml:web']
 			#END watch:mobile_haml
