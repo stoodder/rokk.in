@@ -39,11 +39,13 @@ module.exports = (grunt) ->
 				files:
 					'public/web/js/<%= pkg.name %>.js': [
 						"private/coffee/*.coffee"
-						"private/web/coffee/*.coffee"
+						
 						"private/coffee/models/*.coffee"
 						"private/coffee/collections/*.coffee"
 						"private/web/coffee/views/*.coffee"
 						"private/web/coffee/bindings/*.coffee"
+
+						"private/web/coffee/routes.coffee"
 						"private/web/coffee/init.coffee"
 					]
 				#END files
@@ -94,12 +96,12 @@ module.exports = (grunt) ->
 			'web_coffee':
 				'files': [
 					"private/coffee/*.coffee"
-					"private/web/coffee/*.coffee"
 					"private/coffee/models/*.coffee"
 					"private/coffee/collections/*.coffee"
+					
+					"private/web/coffee/*.coffee"
 					"private/web/coffee/views/*.coffee"
 					"private/web/coffee/bindings/*.coffee"
-					"private/web/coffee/init.coffee"
 				]
 
 				'tasks': ['coffee:web', 'uglify:web']
