@@ -1,0 +1,15 @@
+.DS_Store
+log/**/*
+tmp/**/*
+bin/*
+vendor/gems/*
+!vendor/gems/cache/
+.sass-cache/*
+.env
+.rvmrc
+*.sublime-*
+*.rdb
+*.swp
+*.zip
+node_modules
+./**/.sass-cache
