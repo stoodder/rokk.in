@@ -106,7 +106,10 @@ module.exports = (grunt) ->
 			#END watch:web_coffee
 
 			'web_sass':
-				'files': []
+				'files': [
+					"private/sass/*.sass"
+					"private/web/sass/*.sass"
+				]
 
 				'tasks': ['sass:web']
 			#END watch:web_sass
