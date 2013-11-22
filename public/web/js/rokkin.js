@@ -1,5 +1,5 @@
 (function() {
-  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SoundCloudCollection, SoundCloudModel, SplashView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SoundCloudCollection, SoundCloudModel, SplashView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -112,6 +112,20 @@
       urlStr = _.trim(urlStr);
       return new RegExp(URL_REGEX).test(urlStr);
     },
+    /*
+    		* t500x500:     500×500
+    		* crop:         400×400
+    		* t300x300:     300×300
+    		* large:        100×100 (default)
+    		* t67x67:       67×67    (only on artworks)
+    		* badge:        47×47
+    		* small:        32×32
+    		* tiny:         20×20    (on artworks)
+    		* tiny:         18×18    (on avatars)
+    		* mini:         16×16
+    		* original:     (originally uploaded image)
+    */
+
     'resize_avatar': function(avatar_url, size) {
       var _ref1;
       avatar_url = (_ref1 = ko.unwrap(avatar_url)) != null ? _ref1 : "";
@@ -164,6 +178,9 @@
       if (options.complete == null) {
         options.complete = (function() {});
       }
+      if (options.params == null) {
+        options.params = {};
+      }
       if (options.access_token != null) {
         SC.accessToken(options.access_token);
       }
@@ -194,7 +211,7 @@
         case "DELETE":
           method = 'delete';
       }
-      return SC[method](url, callback);
+      return SC[method](url, options.params, callback);
     };
 
     return SoundCloudModel;
@@ -394,16 +411,25 @@
         return new SC_Playlists(this);
       },
       "followers": function() {
-        return new SC_Users(this);
+        var followers;
+        followers = new SC_Users(this);
+        followers.url = "followers";
+        return followers;
       },
       "followings": function() {
-        return new SC_Users(this);
+        var followings;
+        followings = new SC_Users(this);
+        followings.url = "followings";
+        return followings;
       },
       "comments": function() {
         return new SC_Comments(this);
       },
       "favorites": function() {
-        return new SC_Tracks(this);
+        var favorites;
+        favorites = new SC_Tracks(this);
+        favorites.url = "favorites";
+        return favorites;
       },
       "groups": function() {
         return new SC_Groups(this);
@@ -464,6 +490,10 @@
       _ref11 = SoundCloudCollection.__super__.constructor.apply(this, arguments);
       return _ref11;
     }
+
+    SoundCloudCollection.prototype.sync = function(type, options, context) {
+      return SoundCloudModel.prototype.sync.call(this, type, options, context);
+    };
 
     return SoundCloudCollection;
 
@@ -589,6 +619,7 @@
 
     ApplicationView.prototype.observables = {
       'current_user': null,
+      'content_view': null,
       'is_logged_in': false,
       'is_checking_session': false,
       'is_connecting': false
@@ -626,7 +657,8 @@
         success: function(sc_user) {
           user.sc_user.fill(user.sc_user.unwrap());
           _this.current_user(user);
-          return _this.is_logged_in(true);
+          _this.is_logged_in(true);
+          return _this.notifySubscribers();
         },
         complete: function() {
           return _this.is_checking_session(false);
@@ -643,7 +675,8 @@
         success: function() {
           _this.current_user(null);
           SC.accessToken(null);
-          return _this.is_logged_in(false);
+          _this.is_logged_in(false);
+          return _this.notifySubscribers();
         }
       });
     };
@@ -710,7 +743,99 @@
       }
     };
 
+    ApplicationView.prototype.setContentView = function(view) {
+      if (!Falcon.isView(view)) {
+        return;
+      }
+      this.content_view(view);
+      return this.notifySubscribers();
+    };
+
+    ApplicationView.prototype.notifySubscribers = function() {
+      var content_view;
+      if (!Falcon.isView(content_view = this.content_view())) {
+        return;
+      }
+      return this.trigger("update:user", this.current_user());
+    };
+
     return ApplicationView;
+
+  })(Falcon.View);
+
+  DashboardView = (function(_super) {
+    __extends(DashboardView, _super);
+
+    function DashboardView() {
+      _ref20 = DashboardView.__super__.constructor.apply(this, arguments);
+      return _ref20;
+    }
+
+    DashboardView.prototype.url = "#dashboard-tmpl";
+
+    DashboardView.prototype.observables = {
+      "current_user": null,
+      "is_loading_followings": false
+    };
+
+    DashboardView.prototype.initialize = function() {
+      return Application.on("update:user", this.updateCurrentUser, this);
+    };
+
+    DashboardView.prototype.dispose = function() {
+      return Application.off("update:user", this.updateCurrentUser);
+    };
+
+    DashboardView.prototype.filtered_followings = function() {
+      var chain, current_user, models;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return [];
+      }
+      chain = current_user.sc_user.followings.chain();
+      chain.remove(function(user) {
+        return user.get("plan").toLowerCase() === "free";
+      });
+      chain.remove(function(user) {
+        return _.isEmpty(user.get("full_name"));
+      });
+      chain.remove(function(user) {
+        return user.get('track_count') <= 0;
+      });
+      models = chain.models();
+      return _.sortBy(models, function(user) {
+        return _.trim(user.get("full_name")).toLowerCase();
+      });
+    };
+
+    DashboardView.prototype.updateCurrentUser = function(user) {
+      if (user === this.current_user()) {
+        return;
+      }
+      this.current_user(user);
+      return this.fetchInformation();
+    };
+
+    DashboardView.prototype.fetchInformation = function() {
+      var current_user,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return;
+      }
+      if (this.is_loading_followings()) {
+        return;
+      }
+      this.is_loading_followings(true);
+      return current_user.sc_user.followings.fetch({
+        params: {
+          'limit': 100000
+        },
+        complete: function() {
+          return _this.is_loading_followings(false);
+        }
+      });
+    };
+
+    return DashboardView;
 
   })(Falcon.View);
 
@@ -718,8 +843,8 @@
     __extends(SplashView, _super);
 
     function SplashView() {
-      _ref20 = SplashView.__super__.constructor.apply(this, arguments);
-      return _ref20;
+      _ref21 = SplashView.__super__.constructor.apply(this, arguments);
+      return _ref21;
     }
 
     SplashView.prototype.url = '#splash-tmpl';
@@ -818,10 +943,17 @@
   Finch.route("/", {
     setup: function() {
       return Application.checkSession();
+    },
+    load: function() {
+      return Application.setContentView(new DashboardView);
     }
   });
 
-  this.Router = Router = {};
+  this.Router = Router = {
+    'gotoHome': function() {
+      return Finch.navigate("/");
+    }
+  };
 
   if (typeof ENV === "undefined" || ENV === null) {
     throw "Could not find ENV variables";

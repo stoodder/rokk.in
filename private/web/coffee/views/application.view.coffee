@@ -9,6 +9,7 @@ class ApplicationView extends Falcon.View
 
 	observables:
 		'current_user': null
+		'content_view': null
 
 		'is_logged_in': false
 		'is_checking_session': false
@@ -38,6 +39,7 @@ class ApplicationView extends Falcon.View
 				user.sc_user.fill( user.sc_user.unwrap() )
 				@current_user( user )
 				@is_logged_in( true )
+				@notifySubscribers()
 			#END success
 
 			complete: => @is_checking_session( false )
@@ -52,6 +54,7 @@ class ApplicationView extends Falcon.View
 				@current_user( null )
 				SC.accessToken( null )
 				@is_logged_in( false )
+				@notifySubscribers()
 			#END success
 		#END destroy
 	#END logout
@@ -106,5 +109,17 @@ class ApplicationView extends Falcon.View
 			_connect_options = null
 			SC.connectCallback()
 		#END if
-	#END connect_respons
+	#END connect_response
+
+	setContentView: (view) ->
+		return unless Falcon.isView( view )
+
+		@content_view( view )
+		@notifySubscribers()
+	#END setContentView
+
+	notifySubscribers: ->
+		return unless Falcon.isView( content_view = @content_view() )
+		@trigger("update:user", @current_user())
+	#END notifySubscribers
 #END ApplicationView

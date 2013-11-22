@@ -47,6 +47,7 @@ module.exports = (grunt) ->
 						"private/coffee/collections/soundcloud_collection.collection.coffee"
 						"private/coffee/collections/*.coffee"
 
+						"private/web/coffee/views/rokkin_view.view.coffee"
 						"private/web/coffee/views/*.coffee"
 						
 						"private/web/coffee/bindings/*.coffee"

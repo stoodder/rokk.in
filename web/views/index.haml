@@ -47,10 +47,16 @@
 					.logout(title="Logout" data-bind="click: $view.logout")
 						%i.ion-power
 
-
-			#content
-				.content-sidebar
-				.content-main
+			-ko("view: $view.content_view")
+%template#dashboard-tmpl	
+	#sidebar
+		.sidebar-title Artists you Follow
+		%ul.sidebar-list(data-bind="foreach: $view.filtered_followings()")
+			%li.sidebar-list-item.clickable
+				%img(data-bind="src: Helpers.resize_avatar(avatar_url, 'tiny')")
+				-ko("text: full_name")
+	#content
+		Hello Dash
 %template#splash-tmpl
 	#splash
 		.logo

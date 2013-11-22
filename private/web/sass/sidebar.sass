@@ -1,0 +1,50 @@
+#sidebar
+	+box-shadow(1px, 0px, 0px, mix( $black-lightest, $black-lighter ) )
+	position: fixed
+	top: 75px
+	bottom: 20px
+	left: 25px
+	width: 200px
+	padding: 5px 0px 0px 0px
+	margin: 0px
+	border-right: 1px solid mix( $black, $black-lighter, 25% )
+	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+	overflow: auto
+
+	.sidebar-title
+		font-size: 9px
+		color: $grey
+		text-transform: uppercase
+		letter-spacing: .05em
+		font-weight: 700
+		margin-bottom: 5px
+
+	ul.sidebar-list
+		list-style: none
+		padding: 0px
+		margin: 0px
+
+		li.sidebar-list-item.clickable:hover
+			color: orange
+			background-color: mix( $black, $black-lighter )
+
+		li.sidebar-list-item.clickable
+			cursor: pointer
+
+		li.sidebar-list-item
+			padding: 0px
+			font-size: 12px
+			height: 20px
+			line-height: 20px
+			font-size: 10px
+			color: $white-darkest
+			width: 100%
+			overflow: hidden
+			text-overflow: ellipsis
+			white-space: nowrap
+
+			img
+				float: left
+				width: 19px
+				height: 19px
+				margin: 1px 6px 0px 0px

@@ -11,6 +11,7 @@ class SoundCloudModel extends Falcon.Model
 		options.success ?= (->)
 		options.error ?= (->)
 		options.complete ?= (->)
+		options.params ?= {}
 
 		SC.accessToken( options.access_token ) if options.access_token?
 
@@ -34,6 +35,6 @@ class SoundCloudModel extends Falcon.Model
 			when "DELETE" then method = 'delete'
 		#END switch
 
-		return SC[method](url, callback)
+		return SC[method](url, options.params, callback)
 	#END sync
 #END SoundCloudModel

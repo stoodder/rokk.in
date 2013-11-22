@@ -19,7 +19,4 @@
 					.logout(title="Logout" data-bind="click: $view.logout")
 						%i.ion-power
 
-
-			#content
-				.content-sidebar
-				.content-main
+			-ko("view: $view.content_view")

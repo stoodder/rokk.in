@@ -19,10 +19,27 @@ class SC_User extends SoundCloudModel
 
 		"tracks": -> new SC_Tracks( @ )
 		"playlists": -> new SC_Playlists( @ )
-		"followers": -> new SC_Users( @ )
-		"followings": -> new SC_Users( @ )
+		
+		"followers": -> 
+			followers = new SC_Users( @ )
+			followers.url = "followers"
+			return followers
+		#END followers
+		
+		"followings": ->
+			followings = new SC_Users( @ )
+			followings.url = "followings"
+			return followings
+		#END followings
+		
 		"comments": -> new SC_Comments( @ )
-		"favorites": -> new SC_Tracks( @ )
+		
+		"favorites": ->
+			favorites = new SC_Tracks( @ )
+			favorites.url = "favorites"
+			return favorites
+		#END favorites
+		
 		"groups": -> new SC_Groups( @ )
 		"web-profiles": -> new SC_WebProfiles( @ )
 	#END defaults

@@ -40,6 +40,21 @@
 		new RegExp( URL_REGEX ).test( urlStr )
 	#END isEmail
 
+	#----------------------------------
+	###
+		* t500x500:     500×500
+		* crop:         400×400
+		* t300x300:     300×300
+		* large:        100×100 (default)
+		* t67x67:       67×67    (only on artworks)
+		* badge:        47×47
+		* small:        32×32
+		* tiny:         20×20    (on artworks)
+		* tiny:         18×18    (on avatars)
+		* mini:         16×16
+		* original:     (originally uploaded image)
+    ###
+	#----------------------------------
 	'resize_avatar': (avatar_url, size) ->
 		avatar_url = ko.unwrap( avatar_url ) ? ""
 		avatar_url.replace("-large.", "-#{size}.")
