@@ -39,4 +39,9 @@
 		urlStr = _.trim( urlStr )
 		new RegExp( URL_REGEX ).test( urlStr )
 	#END isEmail
+
+	'resize_avatar': (avatar_url, size) ->
+		avatar_url = ko.unwrap( avatar_url ) ? ""
+		avatar_url.replace("-large.", "-#{size}.")
+	#END resize_avatar
 #END Helpers

@@ -19,6 +19,7 @@
 		letter-spacing: .05em
 		vertical-align: middle
 		width: 150px
+		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
 
 		.highlight
 			display: inline
@@ -48,3 +49,32 @@
 			width: 300px
 			vertical-align: top
 			padding-right: 30px
+
+	.mini-profile
+		display: inline-block
+		font-size: 11px
+		color: $white-darkest
+		font-weight: bold
+
+		img
+			+border-radius( 2px )
+			vertical-align: middle
+			height: 25px
+			margin-right: 10px
+	
+	.logout:hover
+		color: $orange-lighter
+
+	.logout
+		+transition-duration(.1s)
+		display: inline-block
+		font-size: 24px
+		color: $grey-darkest
+		cursor: pointer
+		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+		width: 30px
+		margin-left: 30px
+		text-align: right
+
+		i
+			vertical-align: middle

@@ -280,10 +280,8 @@ $desktop-landscape-width: 1600px
 	-ms-backface-visibility: #{$visibility}
 	backface-visibility: #{$visibility}
 
-@mixin icon($icon)
-	font-family: FontAwesome
 
-	@if $icon == remove
-		content: "\f00d"
-	@else if $icon == ok
-		content: "\f00c"
+@mixin smooth-font
+	text-rendering: optimizeLegibility
+	-webkit-font-smoothing: antialiased
+	-moz-osx-font-smoothing: grayscale

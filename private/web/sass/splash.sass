@@ -1,0 +1,61 @@
+#splash
+	position: absolute
+	top: 20%
+	left: 50%
+	width: 500px
+	margin-left: -250px
+	text-align: center
+
+	.logo
+		font-size: 72px
+		font-family: $logo-font
+		color: $white-darkest
+		margin-bottom: 10px
+		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+
+		.highlight
+			display: inline-block
+			color: $orange
+			font-family: inherit
+
+	.tagline
+		font-weight: 200
+		color: $grey-darker
+		font-size: 24px
+		margin-bottom: 60px
+		letter-spacing: .03em
+		font-family: $logo-font
+		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+
+	.login-button:hover
+		background-color: $orange
+		+box-shadow(0px, 4px, 5px, mix( $black, $black-lighter, 25% ))
+		top: -2px
+
+	.login-button
+		+border-radius( 5px )
+		+transition-duration( .25s )
+		+box-shadow(0px, 1px, 0px, mix( $black, $black-lighter, 25% ))
+		position: relative
+		top: 0px
+		display: inline-block
+		background-color: $orange-darker
+		color: $white
+		overflow: hidden
+		cursor: pointer
+		height: 50px
+		width: 400px
+		font-size: 20px
+		font-weight: 400
+		line-height: 50px
+		text-align: center
+		padding: 0px 30px 0px 50px
+		letter-spacing: 0.02em
+
+		i
+			float: left
+			font-size: 48px
+			line-height: 50px
+			width: 50px
+			margin-left: -40px
+			text-align: center

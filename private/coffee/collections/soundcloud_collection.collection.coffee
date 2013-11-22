@@ -1,0 +1,2 @@
+class SoundCloudCollection extends Falcon.Collection
+#END SoundCloudCollection

@@ -1,11 +1,25 @@
 %template#application-tmpl
-	#header
-		.logo
-			rokk
-			.highlight<> .in
-		%form.search-form<>
-			%input(type="text" placeholder="Search...")
-			%i.ion-search
+	-ko("ifnot: $view.is_checking_session") do
+		-ko("ifnot: $view.is_logged_in") do
+			-ko("view: $view.splash_view")
+		-ko("if: $view.is_logged_in") do
+			#header
+				.logo
+					rokk
+					.highlight<> .in
+				%form.search-form<>
+					%input(type="text" placeholder="Search...")
+					%i.ion-search
 
-	#content
-		Hello World
+				.pull-right
+					.mini-profile(data-bind="with: $view.current_user")
+						%img(data-bind="src: Helpers.resize_avatar(avatar_url, 'small')")
+						-ko("text: full_name")
+
+					.logout(title="Logout" data-bind="click: $view.logout")
+						%i.ion-power
+
+
+			#content
+				.content-sidebar
+				.content-main

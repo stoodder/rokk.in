@@ -20,6 +20,12 @@ gem 'sequel'
 gem 'sass'
 gem 'rabl'
 gem 'foreman'
+gem 'oj'
+#gem "pg"
+#gem 'sequel_pg', :require=>'sequel'
+gem "shield", "~> 2.0.0"
+gem 'soundcloud'
+gem 'rack-cors'
 
 # Test requirements
 

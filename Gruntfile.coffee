@@ -15,7 +15,7 @@ npm install grunt --save-dev
 npm install grunt-contrib-coffee --save-dev
 npm install grunt-contrib-uglify --save-dev
 npm install grunt-contrib-watch --save-dev
-npm install grunt-contrib-haml --save-dev
+npm install grunt-contrib-concat --save-dev
 npm install grunt-contrib-sass --save-dev
 
 ###
@@ -25,7 +25,8 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks('grunt-contrib-watch')
 	grunt.loadNpmTasks('grunt-contrib-haml')
 	grunt.loadNpmTasks('grunt-contrib-sass')
-	grunt.registerTask('default', ['coffee', 'uglify', 'sass', 'haml', 'watch'])
+	grunt.loadNpmTasks('grunt-contrib-concat')
+	grunt.registerTask('default', ['coffee', 'uglify', 'sass', 'concat', 'watch'])
 
 	grunt.initConfig
 		'pkg': grunt.file.readJSON('package.json')
@@ -40,9 +41,14 @@ module.exports = (grunt) ->
 					'public/web/js/<%= pkg.name %>.js': [
 						"private/coffee/*.coffee"
 						
+						"private/coffee/models/soundcloud_model.model.coffee"
 						"private/coffee/models/*.coffee"
+
+						"private/coffee/collections/soundcloud_collection.collection.coffee"
 						"private/coffee/collections/*.coffee"
+
 						"private/web/coffee/views/*.coffee"
+						
 						"private/web/coffee/bindings/*.coffee"
 
 						"private/web/coffee/routes.coffee"
@@ -73,24 +79,16 @@ module.exports = (grunt) ->
 			#END mobile
 		#END sass
 
-		'haml':
-			options:
-				'style': 'ugly'
-				'double-quote-attributes': true
-				'no-escape-attrs': true
-				'require': './haml_helpers.rb'
-				'bundleExec': false
-			#END options
-
+		'concat':
 			'web':
 				files:
-					"web/views/index.html": [
+					"web/views/index.haml": [
 						"private/web/haml/index.haml"
 						"private/web/haml/*.haml"
 					]
 				#END files
-			#END haml:web
-		#END haml
+			#END concat:web
+		#END concat
 
 		'watch':
 			'web_coffee':
@@ -116,10 +114,10 @@ module.exports = (grunt) ->
 				'tasks': ['sass:web']
 			#END watch:web_sass
 
-			'web_haml':
+			'web_concat':
 				'files': ["private/web/haml/*.haml"]
 
-				'tasks': ['haml:web']
+				'tasks': ['concat:web']
 			#END watch:mobile_haml
 		#END watch
 	#END initConfig
