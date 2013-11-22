@@ -3,13 +3,13 @@
 	position: fixed
 	top: 75px
 	bottom: 20px
-	left: 25px
-	width: 200px
-	padding: 5px 0px 0px 0px
+	left: 0px
+	width: 226px
+	padding: 0px 0px 0px 0px
 	margin: 0px
 	border-right: 1px solid mix( $black, $black-lighter, 25% )
 	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
-	overflow: auto
+	color: $white-darkest
 
 	.sidebar-title
 		font-size: 9px
@@ -19,32 +19,93 @@
 		font-weight: 700
 		margin-bottom: 5px
 
-	ul.sidebar-list
-		list-style: none
-		padding: 0px
-		margin: 0px
-
-		li.sidebar-list-item.clickable:hover
-			color: orange
-			background-color: mix( $black, $black-lighter )
-
-		li.sidebar-list-item.clickable
-			cursor: pointer
-
-		li.sidebar-list-item
-			padding: 0px
-			font-size: 12px
-			height: 20px
-			line-height: 20px
-			font-size: 10px
+	ul.sidebar-menu
+		li.sidebar-menu-item.selected,
+		li.sidebar-menu-item.selected:hover
 			color: $white-darkest
+			background-color: mix( $black, $black-lighter )
+			cursor: default
+
+		li.sidebar-menu-item:hover
+			color: $orange-lighter
+
+		li.sidebar-menu-item
+			+transition-duration(.1s)
+			padding: 0px 25px
+			font-size: 13px
+			height: 50px
+			line-height: 50px
 			width: 100%
 			overflow: hidden
 			text-overflow: ellipsis
 			white-space: nowrap
+			cursor: pointer
+			text-transform: uppercase
+			letter-spacing: .2em
+			font-weight: 400
+
+			i
+				margin: 0px
+				width: 25px
+				font-size: 22px
+				vertical-align: middle
+
+	ul.sidebar-grid-list
+		text-align: center
+
+		li.sidebar-grid-list-item:hover
+			+opacity(1)
+			z-index: 10
 
 			img
-				float: left
-				width: 19px
-				height: 19px
-				margin: 1px 6px 0px 0px
+				+glow(5px, $orange)
+
+			.tooltip
+				display: block
+
+		li.sidebar-grid-list-item
+			+opacity(.8)
+			+transition-duration(.1s)
+			position: relative
+			z-index: 1	
+			display: inline-block
+			height: 50px
+			width: 50px
+			line-height: 50px
+			text-align: left
+			cursor: pointer
+
+			img
+				height: 49px
+				width: 49px
+				vertical-align: middle
+
+			.tooltip:after
+				content: ""
+				position: absolute
+				bottom: 100%
+				left: 50%
+				border: 5px solid transparent
+				border-bottom-color: $black
+			
+			.tooltip
+				position: absolute
+				top: 100%
+				left: 50%
+				width: 100px
+				margin-left: -50px
+				margin-top: 1px
+				padding: 5px
+				color: $white-darkest
+				background-color: $black
+				display: none
+				line-height: 14px
+				font-size: 9px
+				font-weight: 500
+				text-align: center
+
+				.tooltip-overflow
+					width: 100%
+					overflow: hidden
+					white-space: nowrap
+					text-overflow: ellipsis

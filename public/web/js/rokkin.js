@@ -774,8 +774,7 @@
     DashboardView.prototype.url = "#dashboard-tmpl";
 
     DashboardView.prototype.observables = {
-      "current_user": null,
-      "is_loading_followings": false
+      "current_user": null
     };
 
     DashboardView.prototype.initialize = function() {
@@ -784,27 +783,6 @@
 
     DashboardView.prototype.dispose = function() {
       return Application.off("update:user", this.updateCurrentUser);
-    };
-
-    DashboardView.prototype.filtered_followings = function() {
-      var chain, current_user, models;
-      if (!((current_user = this.current_user()) instanceof User)) {
-        return [];
-      }
-      chain = current_user.sc_user.followings.chain();
-      chain.remove(function(user) {
-        return user.get("plan").toLowerCase() === "free";
-      });
-      chain.remove(function(user) {
-        return _.isEmpty(user.get("full_name"));
-      });
-      chain.remove(function(user) {
-        return user.get('track_count') <= 0;
-      });
-      models = chain.models();
-      return _.sortBy(models, function(user) {
-        return _.trim(user.get("full_name")).toLowerCase();
-      });
     };
 
     DashboardView.prototype.updateCurrentUser = function(user) {
@@ -816,23 +794,10 @@
     };
 
     DashboardView.prototype.fetchInformation = function() {
-      var current_user,
-        _this = this;
+      var current_user;
       if (!((current_user = this.current_user()) instanceof User)) {
-        return;
+
       }
-      if (this.is_loading_followings()) {
-        return;
-      }
-      this.is_loading_followings(true);
-      return current_user.sc_user.followings.fetch({
-        params: {
-          'limit': 100000
-        },
-        complete: function() {
-          return _this.is_loading_followings(false);
-        }
-      });
     };
 
     return DashboardView;

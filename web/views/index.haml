@@ -3,7 +3,7 @@
 	%head
 		%title rokk.in | Fund and Discover Great Music
 
-		%link(href="http://fonts.googleapis.com/css?family=Average+Sans|PT+Sans|Maven+Pro:400,500|Play" rel="stylesheet" type="text/css")
+		%link(href="http://fonts.googleapis.com/css?family=Play" rel="stylesheet" type="text/css")
 		%link(href="/css/reset.css" rel="stylesheet" type="text/css")
 		%link(href="/css/ionicons.min.css" rel="stylesheet" type="text/css")
 		%link(href="/css/icomoon.css" rel="stylesheet" type="text/css")
@@ -47,16 +47,21 @@
 					.logout(title="Logout" data-bind="click: $view.logout")
 						%i.ion-power
 
-			-ko("view: $view.content_view")
+			#sidebar
+				%ul.sidebar-menu
+					%li.sidebar-menu-item
+						%i.ion-compass
+						Dashboard
+					%li.sidebar-menu-item
+						%i.ion-social-rss
+						Stream
+					%li.sidebar-menu-item
+						%i.ion-person
+						Profile
+
+			#content(data-bind="view: $view.content_view")
 %template#dashboard-tmpl	
-	#sidebar
-		.sidebar-title Artists you Follow
-		%ul.sidebar-list(data-bind="foreach: $view.filtered_followings()")
-			%li.sidebar-list-item.clickable
-				%img(data-bind="src: Helpers.resize_avatar(avatar_url, 'tiny')")
-				-ko("text: full_name")
-	#content
-		Hello Dash
+	Hello Dash
 %template#splash-tmpl
 	#splash
 		.logo
