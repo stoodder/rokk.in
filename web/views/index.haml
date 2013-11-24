@@ -9,7 +9,8 @@
 		%link(href="/css/icomoon.css" rel="stylesheet" type="text/css")
 		%link(href="/web/css/rokkin.min.css" rel="stylesheet" type="text/css")
 
-		%script(src="http://connect.soundcloud.com/sdk.js")
+		%script(src="http://connect.soundcloud.com/sdk.js" type="text/javascript")
+		%script(src="https://js.balancedpayments.com/v1/balanced.js" type="text/javascript")
 
 		%script(src="/js/jquery-1.10.2.min.js" type="text/javascript")
 		%script(src="/js/underscore-1.5.2.min.js" type="text/javascript")
@@ -20,8 +21,9 @@
 		:javascript
 			Falcon.baseApiUrl = "/api";
 			window.ENV = ENV = {
-				"SOUNDCLOUD_CLIENT_ID": "43c5eb08ce4cad456b238c464be6543e",
-				"SOUNDCLOUD_REDIRECT_URL": "#{soundcloud_redirect_url}"
+				"SOUNDCLOUD_CLIENT_ID": "#{ENV['SOUNDCLOUD_CLIENT_ID']}",
+				"SOUNDCLOUD_REDIRECT_URL": "#{soundcloud_redirect_url}",
+				"BALANCED_MAKRETPLACE_URI": "#{ENV['BALANCED_MAKRETPLACE_URI']}"
 			};
 
 		%script(src="/web/js/rokkin.js" type="text/javascript")

@@ -786,9 +786,11 @@
     ApplicationView.prototype.observables = {
       'current_user': null,
       'content_view': null,
+      'modal_view': null,
       'is_logged_in': false,
       'is_checking_session': false,
       'is_connecting': false,
+      'is_showing_modal': false,
       'is_dashboard_selected': function() {
         return this.content_view() instanceof DashboardView;
       },
@@ -1170,6 +1172,8 @@
     client_id: ENV['SOUNDCLOUD_CLIENT_ID'],
     redirect_uri: ENV['SOUNDCLOUD_REDIRECT_URL']
   });
+
+  balanced.init(ENV['BALANCED_MAKRETPLACE_URI']);
 
   Falcon.apply(Application);
 

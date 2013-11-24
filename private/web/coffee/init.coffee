@@ -7,6 +7,9 @@ SC.initialize
 	redirect_uri: ENV['SOUNDCLOUD_REDIRECT_URL']
 #END initialize
 
+#Initialize Balanced
+balanced.init(ENV['BALANCED_MAKRETPLACE_URI'])
+
 # Initialize Our Application
 Falcon.apply( Application )
 Finch.listen()

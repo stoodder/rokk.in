@@ -10,10 +10,12 @@ class ApplicationView extends Falcon.View
 	observables:
 		'current_user': null
 		'content_view': null
+		'modal_view': null
 
 		'is_logged_in': false
 		'is_checking_session': false
 		'is_connecting': false
+		'is_showing_modal': false
 
 		'is_dashboard_selected': -> @content_view() instanceof DashboardView
 		'is_stream_selected': -> @content_view() instanceof StreamView
