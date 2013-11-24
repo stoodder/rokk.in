@@ -8,6 +8,14 @@ Finch.route "/",
 	#END load
 #END /
 
+Finch.route "[/]stream",
+	setup: ->
+		@view = new StreamView
+		Application.setContentView( @view )
+	#END setup
+#END stream
+
 @Router = Router =
-	'gotoHome': -> Finch.navigate("/")
+	'gotoDashboard': -> Finch.navigate("/")
+	'gotoStream': -> Finch.navigate("/stream")
 #END Router

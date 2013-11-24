@@ -55,8 +55,8 @@
 		* original:     (originally uploaded image)
     ###
 	#----------------------------------
-	'resize_avatar': (avatar_url, size) ->
+	'resize_image': (avatar_url, size) ->
 		avatar_url = ko.unwrap( avatar_url ) ? ""
 		avatar_url.replace("-large.", "-#{size}.")
-	#END resize_avatar
+	#END resize_image
 #END Helpers

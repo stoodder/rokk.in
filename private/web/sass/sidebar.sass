@@ -1,6 +1,7 @@
 #sidebar
 	+box-shadow(1px, 0px, 0px, mix( $black-lightest, $black-lighter ) )
 	position: fixed
+	z-index: 2
 	top: 75px
 	bottom: 20px
 	left: 0px
@@ -22,12 +23,18 @@
 	ul.sidebar-menu
 		li.sidebar-menu-item.selected,
 		li.sidebar-menu-item.selected:hover
-			color: $white-darkest
+			color: $orange
 			background-color: mix( $black, $black-lighter )
 			cursor: default
 
+			i
+				color: $grey-lightest
+
 		li.sidebar-menu-item:hover
 			color: $orange-lighter
+
+			i
+				color: $white-darkest
 
 		li.sidebar-menu-item
 			+transition-duration(.1s)
@@ -49,6 +56,7 @@
 				width: 25px
 				font-size: 22px
 				vertical-align: middle
+				color: $white-darkest
 
 	ul.sidebar-grid-list
 		text-align: center

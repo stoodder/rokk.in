@@ -1,4 +1,12 @@
 class SoundCloudModel extends Falcon.Model
+	makeUrl: (type, parent) ->
+		original_base_api_url = Falcon.baseApiUrl
+		Falcon.baseApiUrl = ""
+		url = super(type, parent)
+		Falcon.baseApiUrl = original_base_api_url
+		return url
+	#END makeUrl
+
 	sync: (type, options, context) ->
 		type = "GET" unless _.isString( type )
 		type = _.trim( type ).toUpperCase()
@@ -15,7 +23,7 @@ class SoundCloudModel extends Falcon.Model
 
 		SC.accessToken( options.access_token ) if options.access_token?
 
-		url = @makeUrl( type )
+		url = options.url ? @makeUrl( type, @parent )
 		callback = (data, error) =>
 			parsed_data = @parse( data, options )
 			@fill( parsed_data ) if options.fill

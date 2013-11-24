@@ -1,7 +1,8 @@
 (function() {
-  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SoundCloudCollection, SoundCloudModel, SplashView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   URL_REGEX = /((http\:\/\/|https\:\/\/|ftp\:\/\/)|(www\.))+(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
 
@@ -126,7 +127,7 @@
     		* original:     (originally uploaded image)
     */
 
-    'resize_avatar': function(avatar_url, size) {
+    'resize_image': function(avatar_url, size) {
       var _ref1;
       avatar_url = (_ref1 = ko.unwrap(avatar_url)) != null ? _ref1 : "";
       return avatar_url.replace("-large.", "-" + size + ".");
@@ -150,8 +151,17 @@
       return _ref1;
     }
 
+    SoundCloudModel.prototype.makeUrl = function(type, parent) {
+      var original_base_api_url, url;
+      original_base_api_url = Falcon.baseApiUrl;
+      Falcon.baseApiUrl = "";
+      url = SoundCloudModel.__super__.makeUrl.call(this, type, parent);
+      Falcon.baseApiUrl = original_base_api_url;
+      return url;
+    };
+
     SoundCloudModel.prototype.sync = function(type, options, context) {
-      var callback, method, url,
+      var callback, method, url, _ref2,
         _this = this;
       if (!_.isString(type)) {
         type = "GET";
@@ -184,7 +194,7 @@
       if (options.access_token != null) {
         SC.accessToken(options.access_token);
       }
-      url = this.makeUrl(type);
+      url = (_ref2 = options.url) != null ? _ref2 : this.makeUrl(type, this.parent);
       callback = function(data, error) {
         var parsed_data;
         parsed_data = _this.parse(data, options);
@@ -243,6 +253,7 @@
       user.sc_user.makeUrl = function() {
         return this.url;
       };
+      user.sc_user.activities = new SC_Activities(user.sc_user);
       return user;
     };
 
@@ -250,12 +261,59 @@
 
   })(Falcon.Model);
 
+  SC_Activity = (function(_super) {
+    __extends(SC_Activity, _super);
+
+    function SC_Activity() {
+      _ref3 = SC_Activity.__super__.constructor.apply(this, arguments);
+      return _ref3;
+    }
+
+    SC_Activity.prototype.url = "activities";
+
+    SC_Activity.prototype.defaults = {
+      'tags': '',
+      'type': '',
+      'created_at': null,
+      'track': function() {
+        return new SC_Track;
+      },
+      'playlist': function() {
+        return new SC_Playlist;
+      },
+      'user': function() {
+        return new SC_User;
+      }
+    };
+
+    SC_Activity.prototype.parse = function(data) {
+      var ret;
+      ret = {
+        'created_at': data['created_at'],
+        'tags': data['tags'],
+        'type': data['type']
+      };
+      if (data.type === 'track') {
+        ret['track'] = data['origin'];
+      } else if (data.type === 'playlist') {
+        ret['playlist'] = data['origin'];
+      } else if (data.type === 'favoriting') {
+        ret['user'] = data['origin']['user'];
+        ret['track'] = data['origin']['track'];
+      }
+      return ret;
+    };
+
+    return SC_Activity;
+
+  })(SoundCloudModel);
+
   SC_Application = (function(_super) {
     __extends(SC_Application, _super);
 
     function SC_Application() {
-      _ref3 = SC_Application.__super__.constructor.apply(this, arguments);
-      return _ref3;
+      _ref4 = SC_Application.__super__.constructor.apply(this, arguments);
+      return _ref4;
     }
 
     SC_Application.prototype.url = "apps";
@@ -268,8 +326,8 @@
     __extends(SC_Comment, _super);
 
     function SC_Comment() {
-      _ref4 = SC_Comment.__super__.constructor.apply(this, arguments);
-      return _ref4;
+      _ref5 = SC_Comment.__super__.constructor.apply(this, arguments);
+      return _ref5;
     }
 
     SC_Comment.prototype.url = "comments";
@@ -282,8 +340,8 @@
     __extends(SC_Group, _super);
 
     function SC_Group() {
-      _ref5 = SC_Group.__super__.constructor.apply(this, arguments);
-      return _ref5;
+      _ref6 = SC_Group.__super__.constructor.apply(this, arguments);
+      return _ref6;
     }
 
     SC_Group.prototype.url = "groups";
@@ -296,8 +354,8 @@
     __extends(SC_Playlist, _super);
 
     function SC_Playlist() {
-      _ref6 = SC_Playlist.__super__.constructor.apply(this, arguments);
-      return _ref6;
+      _ref7 = SC_Playlist.__super__.constructor.apply(this, arguments);
+      return _ref7;
     }
 
     SC_Playlist.prototype.url = "playlists";
@@ -307,14 +365,38 @@
   })(SoundCloudModel);
 
   SC_Track = (function(_super) {
+    var _currently_playing_track;
+
     __extends(SC_Track, _super);
 
     function SC_Track() {
-      _ref7 = SC_Track.__super__.constructor.apply(this, arguments);
-      return _ref7;
+      _ref8 = SC_Track.__super__.constructor.apply(this, arguments);
+      return _ref8;
     }
 
     SC_Track.prototype.url = "tracks";
+
+    _currently_playing_track = null;
+
+    SC_Track.stopCurrent = function() {
+      if (!(_currently_playing_track instanceof SC_Track)) {
+        return;
+      }
+      _currently_playing_track.stop();
+      return _currently_playing_track = null;
+    };
+
+    SC_Track.setCurrentlyPlaying = function(track) {
+      this.stopCurrent();
+      if (!(track instanceof SC_Track)) {
+        return;
+      }
+      return _currently_playing_track = track;
+    };
+
+    SC_Track.prototype["is_playing"] = false;
+
+    SC_Track.prototype["sound"] = null;
 
     SC_Track.prototype.defaults = {
       "created_at": null,
@@ -375,6 +457,43 @@
       }
     };
 
+    SC_Track.prototype.observables = {
+      "is_playing": false
+    };
+
+    SC_Track.prototype.togglePlay = function() {
+      if (this.is_playing) {
+        return this.stop();
+      } else {
+        return this.play;
+      }
+    };
+
+    SC_Track.prototype.play = function() {
+      var _this = this;
+      if (this.is_playing()) {
+        return;
+      }
+      if (this.sound) {
+        return this.sound.play();
+      }
+      return SC.stream("/tracks/" + (this.get('id')), function(sound, error) {
+        console.log(error);
+        SC_Track.setCurrentlyPlaying(_this);
+        _this.sound = sound;
+        _this.sound.play();
+        return _this.is_playing(true);
+      });
+    };
+
+    SC_Track.prototype.stop = function() {
+      if (!this.is_playing()) {
+        return;
+      }
+      this.sound.stop();
+      return this.is_playing(false);
+    };
+
     return SC_Track;
 
   })(SoundCloudModel);
@@ -383,8 +502,8 @@
     __extends(SC_User, _super);
 
     function SC_User() {
-      _ref8 = SC_User.__super__.constructor.apply(this, arguments);
-      return _ref8;
+      _ref9 = SC_User.__super__.constructor.apply(this, arguments);
+      return _ref9;
     }
 
     SC_User.prototype.url = "users";
@@ -447,8 +566,8 @@
     __extends(SC_WebProfile, _super);
 
     function SC_WebProfile() {
-      _ref9 = SC_WebProfile.__super__.constructor.apply(this, arguments);
-      return _ref9;
+      _ref10 = SC_WebProfile.__super__.constructor.apply(this, arguments);
+      return _ref10;
     }
 
     SC_WebProfile.prototype.url = "web-profiles";
@@ -461,8 +580,8 @@
     __extends(User, _super);
 
     function User() {
-      _ref10 = User.__super__.constructor.apply(this, arguments);
-      return _ref10;
+      _ref11 = User.__super__.constructor.apply(this, arguments);
+      return _ref11;
     }
 
     User.prototype.url = "user";
@@ -487,9 +606,18 @@
     __extends(SoundCloudCollection, _super);
 
     function SoundCloudCollection() {
-      _ref11 = SoundCloudCollection.__super__.constructor.apply(this, arguments);
-      return _ref11;
+      _ref12 = SoundCloudCollection.__super__.constructor.apply(this, arguments);
+      return _ref12;
     }
+
+    SoundCloudCollection.prototype.makeUrl = function(type, parent) {
+      var original_base_api_url, url;
+      original_base_api_url = Falcon.baseApiUrl;
+      Falcon.baseApiUrl = "";
+      url = SoundCloudCollection.__super__.makeUrl.call(this, type, parent);
+      Falcon.baseApiUrl = original_base_api_url;
+      return url;
+    };
 
     SoundCloudCollection.prototype.sync = function(type, options, context) {
       return SoundCloudModel.prototype.sync.call(this, type, options, context);
@@ -499,12 +627,50 @@
 
   })(Falcon.Collection);
 
+  SC_Activities = (function(_super) {
+    __extends(SC_Activities, _super);
+
+    function SC_Activities() {
+      _ref13 = SC_Activities.__super__.constructor.apply(this, arguments);
+      return _ref13;
+    }
+
+    SC_Activities.prototype.model = SC_Activity;
+
+    SC_Activities.prototype.parse = function(data) {
+      var item;
+      return (function() {
+        var _i, _len, _ref14, _ref15, _results;
+        _ref15 = (_ref14 = data.collection) != null ? _ref14 : [];
+        _results = [];
+        for (_i = 0, _len = _ref15.length; _i < _len; _i++) {
+          item = _ref15[_i];
+          _results.push(SC_Activity.prototype.parse(item));
+        }
+        return _results;
+      })();
+    };
+
+    SC_Activities.prototype.fetchTracks = function() {
+      var args, original_url, ret;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      original_url = this.url;
+      this.url = "activities/tracks";
+      ret = this.fetch.apply(this, args);
+      this.url = original_url;
+      return ret;
+    };
+
+    return SC_Activities;
+
+  })(SoundCloudCollection);
+
   SC_Applications = (function(_super) {
     __extends(SC_Applications, _super);
 
     function SC_Applications() {
-      _ref12 = SC_Applications.__super__.constructor.apply(this, arguments);
-      return _ref12;
+      _ref14 = SC_Applications.__super__.constructor.apply(this, arguments);
+      return _ref14;
     }
 
     SC_Applications.prototype.model = SC_Application;
@@ -517,8 +683,8 @@
     __extends(SC_Comments, _super);
 
     function SC_Comments() {
-      _ref13 = SC_Comments.__super__.constructor.apply(this, arguments);
-      return _ref13;
+      _ref15 = SC_Comments.__super__.constructor.apply(this, arguments);
+      return _ref15;
     }
 
     SC_Comments.prototype.model = SC_Comment;
@@ -531,8 +697,8 @@
     __extends(SC_Groups, _super);
 
     function SC_Groups() {
-      _ref14 = SC_Groups.__super__.constructor.apply(this, arguments);
-      return _ref14;
+      _ref16 = SC_Groups.__super__.constructor.apply(this, arguments);
+      return _ref16;
     }
 
     SC_Groups.prototype.model = SC_Group;
@@ -545,8 +711,8 @@
     __extends(SC_Playlists, _super);
 
     function SC_Playlists() {
-      _ref15 = SC_Playlists.__super__.constructor.apply(this, arguments);
-      return _ref15;
+      _ref17 = SC_Playlists.__super__.constructor.apply(this, arguments);
+      return _ref17;
     }
 
     SC_Playlists.prototype.model = SC_Playlist;
@@ -559,8 +725,8 @@
     __extends(SC_Tracks, _super);
 
     function SC_Tracks() {
-      _ref16 = SC_Tracks.__super__.constructor.apply(this, arguments);
-      return _ref16;
+      _ref18 = SC_Tracks.__super__.constructor.apply(this, arguments);
+      return _ref18;
     }
 
     SC_Tracks.prototype.model = SC_Track;
@@ -573,8 +739,8 @@
     __extends(SC_Users, _super);
 
     function SC_Users() {
-      _ref17 = SC_Users.__super__.constructor.apply(this, arguments);
-      return _ref17;
+      _ref19 = SC_Users.__super__.constructor.apply(this, arguments);
+      return _ref19;
     }
 
     SC_Users.prototype.model = SC_User;
@@ -587,8 +753,8 @@
     __extends(SC_WebProfiles, _super);
 
     function SC_WebProfiles() {
-      _ref18 = SC_WebProfiles.__super__.constructor.apply(this, arguments);
-      return _ref18;
+      _ref20 = SC_WebProfiles.__super__.constructor.apply(this, arguments);
+      return _ref20;
     }
 
     SC_WebProfiles.prototype.model = SC_WebProfile;
@@ -603,8 +769,8 @@
     __extends(ApplicationView, _super);
 
     function ApplicationView() {
-      _ref19 = ApplicationView.__super__.constructor.apply(this, arguments);
-      return _ref19;
+      _ref21 = ApplicationView.__super__.constructor.apply(this, arguments);
+      return _ref21;
     }
 
     ApplicationView.prototype.url = '#application-tmpl';
@@ -622,7 +788,13 @@
       'content_view': null,
       'is_logged_in': false,
       'is_checking_session': false,
-      'is_connecting': false
+      'is_connecting': false,
+      'is_dashboard_selected': function() {
+        return this.content_view() instanceof DashboardView;
+      },
+      'is_stream_selected': function() {
+        return this.content_view() instanceof StreamView;
+      }
     };
 
     ApplicationView.prototype.checkSession = function() {
@@ -632,7 +804,7 @@
       }
       this.is_checking_session(true);
       return (new Session).fetch({
-        success: function(session) {
+        success: function(session, data) {
           return _this.login(session);
         },
         error: function(session) {
@@ -725,7 +897,7 @@
       };
     };
 
-    ApplicationView.prototype.connect_response = function(status, params) {
+    ApplicationView.prototype.connectResponse = function(status, params) {
       if (!this.is_connecting()) {
         return;
       }
@@ -767,8 +939,8 @@
     __extends(DashboardView, _super);
 
     function DashboardView() {
-      _ref20 = DashboardView.__super__.constructor.apply(this, arguments);
-      return _ref20;
+      _ref22 = DashboardView.__super__.constructor.apply(this, arguments);
+      return _ref22;
     }
 
     DashboardView.prototype.url = "#dashboard-tmpl";
@@ -808,8 +980,8 @@
     __extends(SplashView, _super);
 
     function SplashView() {
-      _ref21 = SplashView.__super__.constructor.apply(this, arguments);
-      return _ref21;
+      _ref23 = SplashView.__super__.constructor.apply(this, arguments);
+      return _ref23;
     }
 
     SplashView.prototype.url = '#splash-tmpl';
@@ -899,6 +1071,64 @@
 
   })(Falcon.View);
 
+  StreamView = (function(_super) {
+    __extends(StreamView, _super);
+
+    function StreamView() {
+      _ref24 = StreamView.__super__.constructor.apply(this, arguments);
+      return _ref24;
+    }
+
+    StreamView.prototype.url = "#stream-tmpl";
+
+    StreamView.prototype.defaults = {
+      "tracks": function() {
+        return new SC_Tracks;
+      }
+    };
+
+    StreamView.prototype.observables = {
+      "is_loading": false,
+      "current_user": null
+    };
+
+    StreamView.prototype.initialize = function() {
+      return Application.on("update:user", this.updateCurrentUser, this);
+    };
+
+    StreamView.prototype.dispose = function() {
+      return Application.off("update:user", this.updateCurrentUser);
+    };
+
+    StreamView.prototype.updateCurrentUser = function(user) {
+      if (user === this.current_user()) {
+        return;
+      }
+      this.current_user(user);
+      return this.fetchInformation();
+    };
+
+    StreamView.prototype.fetchInformation = function() {
+      var current_user,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return;
+      }
+      if (this.is_loading()) {
+        return;
+      }
+      this.is_loading(true);
+      return current_user.sc_user.activities.fetchTracks({
+        complete: function() {
+          return _this.is_loading(false);
+        }
+      });
+    };
+
+    return StreamView;
+
+  })(Falcon.View);
+
   Falcon.addBinding("src", function(element, valueAccessor) {
     var value;
     value = ko.unwrap(valueAccessor());
@@ -914,9 +1144,19 @@
     }
   });
 
+  Finch.route("[/]stream", {
+    setup: function() {
+      this.view = new StreamView;
+      return Application.setContentView(this.view);
+    }
+  });
+
   this.Router = Router = {
-    'gotoHome': function() {
+    'gotoDashboard': function() {
       return Finch.navigate("/");
+    },
+    'gotoStream': function() {
+      return Finch.navigate("/stream");
     }
   };
 

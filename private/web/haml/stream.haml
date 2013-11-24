@@ -1,0 +1,16 @@
+%template#stream-tmpl
+	-ko("if: $view.is_loading") do
+		.loader
+	-ko("ifnot: $view.is_loading") do
+		-ko("with: $view.current_user") do
+			%ul.grid-list(data-bind="foreach: sc_user.activities")
+				%li.grid-list-item.track(data-bind="with: track")<>
+					.track-image
+						%img(data-bind="src: Helpers.resize_image(artwork_url,'t300x300')")
+						-ko("if: streamable") do
+							.track-play-icon(data-bind="click: play")<>
+								-ko("ifnot: is_playing") do
+									%i.ion-ios7-play<>
+								-ko("if: is_playing") do
+									%i.ion-ios7-pause<>
+					-ko("text: title")

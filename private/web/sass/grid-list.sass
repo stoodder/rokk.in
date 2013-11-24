@@ -1,0 +1,55 @@
+ul.grid-list
+	text-align: left
+
+	li.grid-list-item
+		display: inline-block
+		width: 20%
+		vertical-align: top
+		margin-bottom: 10px
+		padding: 0px 5px
+
+	li.grid-list-item.track
+		.track-image
+			position: relative
+
+			.track-play-icon:hover
+				+box-shadow(0px, 0px, 4px, mix($black, $black-lighter, 25%) )
+				+opacity(1)
+				background-color: rgba( $orange, .8 )
+				border-color: $white-darker
+
+			.track-play-icon
+				+transition-duration(.1s)
+				+opacity(.6)
+				+border-radius(20px)
+				+box-shadow(0px, 0px, 1px, rgba( mix($black, $black-lighter, 25%), .8 ) )
+				position: absolute
+				z-index: 2
+				top: 50%
+				left: 50%
+				background-color: $black-lighter
+				border: 2px solid $white-darker
+				height: 40px
+				width: 40px
+				line-height: 35px
+				margin-top: -20px
+				margin-left: -20px
+				color: $white-darkest
+				cursor: pointer
+				text-align: center
+
+				i
+					display: inline-block
+					vertical-align: middle
+					height: 22px
+					font-size: 22px
+					width: 22px
+					text-align: center
+					margin-left: 3px
+
+			img
+				+border-radius( 3px )
+				position: relative
+				z-index: 1
+				max-width: 100%
+				border-bottom: 1px solid mix( $black, $black-lighter, 25% )

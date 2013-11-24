@@ -14,6 +14,9 @@ class ApplicationView extends Falcon.View
 		'is_logged_in': false
 		'is_checking_session': false
 		'is_connecting': false
+
+		'is_dashboard_selected': -> @content_view() instanceof DashboardView
+		'is_stream_selected': -> @content_view() instanceof StreamView
 	#END observables
 
 	checkSession: ->
@@ -21,7 +24,7 @@ class ApplicationView extends Falcon.View
 
 		@is_checking_session( true )
 		( new Session ).fetch
-			success: (session) => @login( session )
+			success: (session, data) => @login( session )
 			error: (session) => @is_checking_session( false )
 		#END fetch
 	#END checkSession
@@ -94,7 +97,7 @@ class ApplicationView extends Falcon.View
 		} #END return
 	#END connect
 
-	connect_response: (status, params) ->
+	connectResponse: (status, params) ->
 		return unless @is_connecting()
 		@is_connecting( false )
 		
@@ -109,7 +112,7 @@ class ApplicationView extends Falcon.View
 			_connect_options = null
 			SC.connectCallback()
 		#END if
-	#END connect_response
+	#END connectResponse
 
 	setContentView: (view) ->
 		return unless Falcon.isView( view )

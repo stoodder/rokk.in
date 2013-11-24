@@ -1,6 +1,6 @@
 -unless @params[:error]
 	:javascript
-		window.opener.Application.connect_response("success", #{@params.to_json})
+		window.opener.Application.connectResponse("success", #{@params.to_json})
 -else
 	:javascript
-		window.opener.Application.connect_response("error", #{@params.to_json})
+		window.opener.Application.connectResponse("error", #{@params.to_json})

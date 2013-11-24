@@ -13,7 +13,7 @@
 
 				.pull-right
 					.mini-profile(data-bind="with: $view.current_user")
-						%img(data-bind="src: Helpers.resize_avatar(avatar_url, 'small')")
+						%img(data-bind="src: Helpers.resize_image(avatar_url, 'small')")
 						-ko("text: full_name")
 
 					.logout(title="Logout" data-bind="click: $view.logout")
@@ -21,12 +21,14 @@
 
 			#sidebar
 				%ul.sidebar-menu
-					%li.sidebar-menu-item
+					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_dashboard_selected}, click: Router.gotoDashboard")
 						%i.ion-compass
 						Dashboard
-					%li.sidebar-menu-item
+
+					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_stream_selected}, click: Router.gotoStream")
 						%i.ion-social-rss
 						Stream
+
 					%li.sidebar-menu-item
 						%i.ion-person
 						Profile

@@ -1,6 +1,23 @@
 class SC_Track extends SoundCloudModel
 	url: "tracks"
 
+	_currently_playing_track = null
+	@stopCurrent = ->
+		return unless _currently_playing_track instanceof SC_Track
+		_currently_playing_track.stop()
+		_currently_playing_track = null
+	#END stopCurrent
+
+	@setCurrentlyPlaying = (track) ->
+		@stopCurrent()
+		return unless track instanceof SC_Track
+		_currently_playing_track = track
+	#END setCurrentPlaying
+
+
+	"is_playing": false
+	"sound": null
+
 	defaults:
 		"created_at": null
 		"title": ""
@@ -50,4 +67,28 @@ class SC_Track extends SoundCloudModel
 			return shared_to
 		#END share_to
 	#END defaults
+
+	observables:
+		"is_playing": false
+
+	togglePlay: -> if @is_playing then @stop() else @play
+
+	play: ->
+		return if @is_playing()
+		return @sound.play() if @sound
+
+		SC.stream "/tracks/#{@get('id')}", (sound, error) =>
+			console.log( error )
+			SC_Track.setCurrentlyPlaying(@)
+			@sound = sound
+			@sound.play()
+			@is_playing(true)
+		#END stream
+	#END stream
+
+	stop: ->
+		return unless @is_playing()
+		@sound.stop()
+		@is_playing(false)
+	#END stop
 #END SC_Track

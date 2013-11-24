@@ -41,7 +41,7 @@
 
 				.pull-right
 					.mini-profile(data-bind="with: $view.current_user")
-						%img(data-bind="src: Helpers.resize_avatar(avatar_url, 'small')")
+						%img(data-bind="src: Helpers.resize_image(avatar_url, 'small')")
 						-ko("text: full_name")
 
 					.logout(title="Logout" data-bind="click: $view.logout")
@@ -49,19 +49,25 @@
 
 			#sidebar
 				%ul.sidebar-menu
-					%li.sidebar-menu-item
+					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_dashboard_selected}, click: Router.gotoDashboard")
 						%i.ion-compass
 						Dashboard
-					%li.sidebar-menu-item
+
+					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_stream_selected}, click: Router.gotoStream")
 						%i.ion-social-rss
 						Stream
+
 					%li.sidebar-menu-item
 						%i.ion-person
 						Profile
 
 			#content(data-bind="view: $view.content_view")
 %template#dashboard-tmpl	
-	Hello Dash
+	%ul
+		%li New Users
+		%li Top Funders
+		%li Top Funded
+		%li Your Top Donations
 %template#splash-tmpl
 	#splash
 		.logo
@@ -72,3 +78,19 @@
 		.login-button(data-bind="click: $view.connect")
 			%i.icon-soundcloud
 			Sign In with SoundCloud
+%template#stream-tmpl
+	-ko("if: $view.is_loading") do
+		.loader
+	-ko("ifnot: $view.is_loading") do
+		-ko("with: $view.current_user") do
+			%ul.grid-list(data-bind="foreach: sc_user.activities")
+				%li.grid-list-item.track(data-bind="with: track")<>
+					.track-image
+						%img(data-bind="src: Helpers.resize_image(artwork_url,'t300x300')")
+						-ko("if: streamable") do
+							.track-play-icon(data-bind="click: play")<>
+								-ko("ifnot: is_playing") do
+									%i.ion-ios7-play<>
+								-ko("if: is_playing") do
+									%i.ion-ios7-pause<>
+					-ko("text: title")
