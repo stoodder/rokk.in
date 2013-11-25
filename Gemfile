@@ -25,6 +25,7 @@ gem 'oj'
 #gem 'sequel_pg', :require=>'sequel'
 gem "shield", "~> 2.0.0"
 gem 'soundcloud'
+gem 'balanced'
 gem 'rack-cors'
 
 # Test requirements

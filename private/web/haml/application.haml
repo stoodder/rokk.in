@@ -1,4 +1,6 @@
 %template#application-tmpl
+	-ko("if: $view.is_checking_session") do
+		.loader.jumbo
 	-ko("ifnot: $view.is_checking_session") do
 		-ko("ifnot: $view.is_logged_in") do
 			-ko("view: $view.splash_view")
@@ -32,5 +34,9 @@
 					%li.sidebar-menu-item
 						%i.ion-person
 						Profile
+
+					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_settings_selected}, click: Router.gotoSettings")
+						%i.ion-gear-b
+						Settings
 
 			#content(data-bind="view: $view.content_view")

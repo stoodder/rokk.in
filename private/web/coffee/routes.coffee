@@ -10,12 +10,23 @@ Finch.route "/",
 
 Finch.route "[/]stream",
 	setup: ->
-		@view = new StreamView
-		Application.setContentView( @view )
+		@view = Application.setContentView( new StreamView )
 	#END setup
 #END stream
+
+Finch.route "[/]settings",
+	setup: ->
+		@view = Application.setContentView( new SettingsView )
+
+		Finch.observe "showing", (showing) =>
+			return @view.showCreditCard() if showing is "credit_card"
+			@view.showPersonalInformation()
+		#END observe
+	#END setup
+#END settings
 
 @Router = Router =
 	'gotoDashboard': -> Finch.navigate("/")
 	'gotoStream': -> Finch.navigate("/stream")
+	'gotoSettings': -> Finch.navigate("/settings")
 #END Router

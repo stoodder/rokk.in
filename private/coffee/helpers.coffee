@@ -22,19 +22,19 @@
 
 	concat: () ->
 		ret = ""
-		ret += unwrap(arg) for arg in arguments
+		ret += ko.unwrap(arg) for arg in arguments
 		return ret
 	#END concat
 
 	'isEmail': (emailStr) ->
-		emailStr = unwrap( emailStr )
+		emailStr = ko.unwrap( emailStr )
 		emailStr = "" unless _.isString( emailStr )
 		emailStr = _.trim( emailStr )
 		new RegExp( EMAIL_REGEX ).test( emailStr )
 	#END isEmail
 
 	'isUrl': (urlStr) ->
-		urlStr = unwrap( urlStr )
+		urlStr = ko.unwrap( urlStr )
 		urlStr = "" unless _.isString( urlStr )
 		urlStr = _.trim( urlStr )
 		new RegExp( URL_REGEX ).test( urlStr )
@@ -59,4 +59,26 @@
 		avatar_url = ko.unwrap( avatar_url ) ? ""
 		avatar_url.replace("-large.", "-#{size}.")
 	#END resize_image
+
+	formatCreditCardNumber: (cc_number) ->
+		cc_number = ko.unwrap( cc_number )
+		cc_number = _.trim( ( cc_number ? "" ).toString() )
+		cc_number = cc_number.replace(/[^0-9]/gi, "")[0..15]
+		cc_number = _.trim( [cc_number[0..3], cc_number[4..7], cc_number[8..11], cc_number[12..15]].join(" ") ).replace(/\s+/gi, "-")
+		return cc_number
+	#END formatCreditCardNumber
+
+	creditCardImageUrl: (card_type) ->
+		card_type = ko.unwrap( card_type )
+		card_type = "" unless _.isString( card_type )
+		card_type = _.trim( card_type ).toLowerCase()
+
+		return "/images/cards/visa.png" if card_type is "visa"
+		return "/images/cards/mastercard.png" if card_type is "mastercard"
+		return "/images/cards/discover.png" if card_type is "discover"
+		return "/images/cards/amex.png" if card_type is "american express"
+		return "/images/cards/jcb.png" if card_type is "jcb"
+		return "/images/cards/diners.png" if card_type is "diners club"
+		return "/images/cards/credit.png"
+	#END creditCardImageUrl
 #END Helpers

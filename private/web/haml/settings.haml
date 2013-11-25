@@ -1,0 +1,53 @@
+%template#settings-tmpl
+	.content-header
+		%ul.pill-list
+			%li.pill-list-item(data-bind="css: {'selected': $view.is_showing_personal_information}, click: $view.gotoPersonalInfomration")
+				%i.ion-ios7-information
+				Personal Information
+			%li.pill-list-item(data-bind="css: {'selected': $view.is_showing_credit_card}, click: $view.gotoCreditCard")
+				%i.ion-card
+				Credit Card
+	-ko("if: $view.is_showing_personal_information") do
+		Personal Information
+
+	-ko("if: $view.is_showing_credit_card") do
+		%form.form-standard(data-bind="submit: $view.saveCreditCard, css: {'is_loading': $view.is_saving}")
+			-ko("if: $view.has_credit_card") do
+				.form-input<>
+					%label.form-input-label Current Credit Card
+					.form-input-text
+						%img(data-bind="src: Helpers.creditCardImageUrl( $view.current_credit_card_type )")
+						%span(data-bind="html: Helpers.concat('****&nbsp; ****&nbsp; ****&nbsp; ', $view.current_credit_card_last_4)")
+						.btn.btn-small.pull-right(data-bind="click: $view.removeCreditCard")
+							%i.ion-close
+							Remove
+				.form-divider
+			.form-input<>
+				%label.form-input-label Credit Card Number
+				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_number.is_valid, 'has_error': $view.credit_card_number.has_error}")
+					%input(type="text" placeholder="0123-4567-8910-0000" data-bind="value: $view.credit_card_number, valueUpdate: 'afterkeydown'" maxlength="19")
+					.input-hover(data-bind="text: $view.credit_card_type")
+					.input-help-text.error-only(data-bind="text: $view.credit_card_number.error")
+			
+			.form-input.two-third<>
+				%label.form-input-label Expiration
+				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_expiration.is_valid, 'has_error': $view.credit_card_expiration.has_error}")
+					%input(type="text" placeholder="01/2015" data-bind="value: $view.credit_card_expiration")
+					.input-hover
+					.input-help-text.error-only(data-bind="text: $view.credit_card_expiration.error")
+
+
+			.form-input.third
+				%label.form-input-label CVC
+				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_cvc.is_valid, 'has_error': $view.credit_card_cvc.has_error}")
+					%input(type="text" placeholder="123" data-bind="value: $view.credit_card_cvc, valueUpdate: 'afterkeydown'")
+					.input-hover
+					.input-help-text.error-only(data-bind="text: $view.credit_card_cvc.error")
+
+			.form-actions
+				%button.btn.pull-left(data-bind="disable: $view.is_saving")
+					%i.ion-close
+					Cancel
+				%button.btn.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")
+					%i.ion-checkmark
+					Save

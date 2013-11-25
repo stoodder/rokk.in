@@ -3,8 +3,12 @@ class User extends Falcon.Model
 
 	defaults:
 		"soundcloud_access_token": ""
-		"full_name": ""
 		"soundcloud_id": ""
+		
+		"balanced_card_uri": ""
+		"balanced_customer_uri": ""
+
+		"full_name": ""
 		"avatar_url": ""
 
 		"created_at": null

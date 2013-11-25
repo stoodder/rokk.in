@@ -1,8 +1,8 @@
 (function() {
-  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+    __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   URL_REGEX = /((http\:\/\/|https\:\/\/|ftp\:\/\/)|(www\.))+(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi;
 
@@ -70,6 +70,43 @@
     return target;
   };
 
+  ko.extenders["validateable"] = function(target, options) {
+    var _error, _is_valid;
+    _error = ko.observable("");
+    _is_valid = ko.observable(false);
+    target.error = ko.computed({
+      read: function() {
+        return _error();
+      },
+      write: function(value) {
+        value = _.trim((value != null ? value : "").toString());
+        if (!_.isEmpty(value)) {
+          _is_valid(false);
+        }
+        return _error(value);
+      }
+    });
+    target.has_error = ko.computed(function() {
+      return target.error().length > 0;
+    });
+    target.is_valid = ko.computed({
+      read: function() {
+        return !target.has_error() && _is_valid();
+      },
+      write: function(value) {
+        if (value === true) {
+          target.error("");
+        }
+        return _is_valid(value);
+      }
+    });
+    target.clearValidations = function() {
+      target.error("");
+      return _is_valid(false);
+    };
+    return target;
+  };
+
   this.Helpers = Helpers = {
     escapeHTML: function(html) {
       if (!_.isString(html)) {
@@ -93,12 +130,12 @@
       ret = "";
       for (_i = 0, _len = arguments.length; _i < _len; _i++) {
         arg = arguments[_i];
-        ret += unwrap(arg);
+        ret += ko.unwrap(arg);
       }
       return ret;
     },
     'isEmail': function(emailStr) {
-      emailStr = unwrap(emailStr);
+      emailStr = ko.unwrap(emailStr);
       if (!_.isString(emailStr)) {
         emailStr = "";
       }
@@ -106,7 +143,7 @@
       return new RegExp(EMAIL_REGEX).test(emailStr);
     },
     'isUrl': function(urlStr) {
-      urlStr = unwrap(urlStr);
+      urlStr = ko.unwrap(urlStr);
       if (!_.isString(urlStr)) {
         urlStr = "";
       }
@@ -131,6 +168,39 @@
       var _ref1;
       avatar_url = (_ref1 = ko.unwrap(avatar_url)) != null ? _ref1 : "";
       return avatar_url.replace("-large.", "-" + size + ".");
+    },
+    formatCreditCardNumber: function(cc_number) {
+      cc_number = ko.unwrap(cc_number);
+      cc_number = _.trim((cc_number != null ? cc_number : "").toString());
+      cc_number = cc_number.replace(/[^0-9]/gi, "").slice(0, 16);
+      cc_number = _.trim([cc_number.slice(0, 4), cc_number.slice(4, 8), cc_number.slice(8, 12), cc_number.slice(12, 16)].join(" ")).replace(/\s+/gi, "-");
+      return cc_number;
+    },
+    creditCardImageUrl: function(card_type) {
+      card_type = ko.unwrap(card_type);
+      if (!_.isString(card_type)) {
+        card_type = "";
+      }
+      card_type = _.trim(card_type).toLowerCase();
+      if (card_type === "visa") {
+        return "/images/cards/visa.png";
+      }
+      if (card_type === "mastercard") {
+        return "/images/cards/mastercard.png";
+      }
+      if (card_type === "discover") {
+        return "/images/cards/discover.png";
+      }
+      if (card_type === "american express") {
+        return "/images/cards/amex.png";
+      }
+      if (card_type === "jcb") {
+        return "/images/cards/jcb.png";
+      }
+      if (card_type === "diners club") {
+        return "/images/cards/diners.png";
+      }
+      return "/images/cards/credit.png";
     }
   };
 
@@ -142,6 +212,19 @@
       return str.toString().replace(/^\s+/, '').replace(/\s+$/, '');
     }
   });
+
+  ko.subscribable.fn.classify = function() {
+    var extenders, identifier, identifiers, _i, _len;
+    identifiers = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    extenders = {};
+    for (_i = 0, _len = identifiers.length; _i < _len; _i++) {
+      identifier = identifiers[_i];
+      if (_.isString(identifier) && !_.isEmpty(identifier)) {
+        extenders[identifier] = true;
+      }
+    }
+    return this.extend(extenders);
+  };
 
   SoundCloudModel = (function(_super) {
     __extends(SoundCloudModel, _super);
@@ -588,8 +671,10 @@
 
     User.prototype.defaults = {
       "soundcloud_access_token": "",
-      "full_name": "",
       "soundcloud_id": "",
+      "balanced_card_uri": "",
+      "balanced_customer_uri": "",
+      "full_name": "",
       "avatar_url": "",
       "created_at": null,
       "updated_at": null,
@@ -796,6 +881,9 @@
       },
       'is_stream_selected': function() {
         return this.content_view() instanceof StreamView;
+      },
+      'is_settings_selected': function() {
+        return this.content_view() instanceof SettingsView;
       }
     };
 
@@ -919,10 +1007,11 @@
 
     ApplicationView.prototype.setContentView = function(view) {
       if (!Falcon.isView(view)) {
-        return;
+        return null;
       }
       this.content_view(view);
-      return this.notifySubscribers();
+      this.notifySubscribers();
+      return view;
     };
 
     ApplicationView.prototype.notifySubscribers = function() {
@@ -978,12 +1067,293 @@
 
   })(Falcon.View);
 
+  SettingsView = (function(_super) {
+    __extends(SettingsView, _super);
+
+    function SettingsView() {
+      _ref23 = SettingsView.__super__.constructor.apply(this, arguments);
+      return _ref23;
+    }
+
+    SettingsView.prototype.url = "#settings-tmpl";
+
+    SettingsView.prototype.observables = {
+      'alert': '',
+      'is_saving': false,
+      'current_user': null,
+      'is_showing_personal_information': false,
+      'is_showing_credit_card': false,
+      'current_credit_card_last_4': '',
+      'current_credit_card_type': '',
+      'has_credit_card': function() {
+        return !_.isEmpty(this.current_credit_card_last_4()) || !_.isEmpty(this.current_credit_card_type());
+      },
+      'credit_card_type': '',
+      'credit_card_expiration_month': '',
+      'credit_card_expiration_year': '',
+      'credit_card_cvc': '',
+      '_credit_card_number': '',
+      'credit_card_number': {
+        read: function() {
+          return Helpers.formatCreditCardNumber(this._credit_card_number);
+        },
+        write: function(number) {
+          return this._credit_card_number(number);
+        }
+      },
+      'credit_card_expiration': {
+        read: function() {
+          var month, year, _ref24, _ref25;
+          year = _.trim((_ref24 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref24 : "");
+          month = _.trim((_ref25 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref25 : "");
+          if (_.isEmpty(year) || _.isEmpty(month)) {
+            return '';
+          }
+          return "" + month + "/" + year;
+        },
+        write: function(value) {
+          var month, year, _ref24;
+          value = _.trim(value != null ? value : "");
+          _ref24 = value.split("/"), month = _ref24[0], year = _ref24[1];
+          month = _.trim(month != null ? month : "");
+          year = _.trim(year != null ? year : "");
+          if (year.length === 2) {
+            year = "20" + year;
+          }
+          if (month.length === 1) {
+            month = "0" + month;
+          }
+          year = year.slice(0, 4);
+          month = month.slice(0, 2);
+          this.credit_card_expiration_month(month);
+          return this.credit_card_expiration_year(year);
+        }
+      }
+    };
+
+    SettingsView.prototype.initialize = function() {
+      var _this = this;
+      this.alert.classify("validateable");
+      this.credit_card_number.classify("validateable");
+      this.credit_card_expiration.classify("validateable");
+      this.credit_card_cvc.classify("validateable");
+      ko.computed(function() {
+        var is_valid, number;
+        number = _this.credit_card_number();
+        is_valid = balanced.card.isCardNumberValid(number);
+        _this.credit_card_number.is_valid(is_valid);
+        return _this.credit_card_type(is_valid ? balanced.card.cardType(number) : "");
+      });
+      ko.computed(function() {
+        var month, year;
+        _this.credit_card_expiration();
+        month = _this.credit_card_expiration_month.peek();
+        year = _this.credit_card_expiration_year.peek();
+        return _this.credit_card_expiration.is_valid(balanced.card.isExpiryValid(month, year));
+      });
+      ko.computed(function() {
+        var cvc, number;
+        number = _this.credit_card_number();
+        cvc = _this.credit_card_cvc();
+        return _this.credit_card_cvc.is_valid(balanced.card.isSecurityCodeValid(number, cvc));
+      });
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.showPersonalInformation();
+    };
+
+    SettingsView.prototype.dispose = function() {
+      return Application.off("update:user", this.updateCurrentUser);
+    };
+
+    SettingsView.prototype.updateCurrentUser = function(user) {
+      if (user === this.current_user()) {
+        return;
+      }
+      this.current_user(user);
+      return this.populateData();
+    };
+
+    SettingsView.prototype.populateData = function() {
+      var current_user;
+      if ((current_user = this.current_user()) instanceof User) {
+        this.current_credit_card_last_4(current_user.get('card_last_4'));
+        this.current_credit_card_type(current_user.get('card_type'));
+      } else {
+        this.current_credit_card_last_4("");
+        this.current_credit_card_type("");
+      }
+      this.credit_card_number("");
+      this.credit_card_expiration("");
+      return this.credit_card_cvc("");
+    };
+
+    SettingsView.prototype._reset = function() {
+      this.is_showing_personal_information(false);
+      this.is_showing_credit_card(false);
+      this.credit_card_number("");
+      this.credit_card_expiration("");
+      this.credit_card_cvc("");
+      return this._clearValidations();
+    };
+
+    SettingsView.prototype._clearValidations = function() {
+      this.alert.clearValidations();
+      this.credit_card_number.clearValidations();
+      this.credit_card_expiration.clearValidations();
+      return this.credit_card_cvc.clearValidations();
+    };
+
+    SettingsView.prototype._hasError = function() {
+      if (this.is_showing_credit_card()) {
+        return this.credit_card_number.has_error() || this.credit_card_expiration.has_error() || this.credit_card_cvc.has_error();
+      }
+      return false;
+    };
+
+    SettingsView.prototype.showPersonalInformation = function() {
+      this._reset();
+      return this.is_showing_personal_information(true);
+    };
+
+    SettingsView.prototype.showCreditCard = function() {
+      this._reset();
+      return this.is_showing_credit_card(true);
+    };
+
+    SettingsView.prototype.cancelSaveCreditCard = function() {
+      if (this.is_saving()) {
+        return false;
+      }
+      this.credit_card_number("");
+      this.credit_card_expiration("");
+      this.credit_card_cvc("");
+      return false;
+    };
+
+    SettingsView.prototype.saveCreditCard = function() {
+      var credit_card_cvc, credit_card_expiration, credit_card_expiration_month, credit_card_expiration_year, credit_card_number, current_user, _saveCardToUser,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return;
+      }
+      if (this.is_saving()) {
+        return false;
+      }
+      this._clearValidations();
+      credit_card_number = this.credit_card_number();
+      credit_card_expiration = this.credit_card_expiration();
+      credit_card_cvc = this.credit_card_cvc();
+      credit_card_expiration_month = this.credit_card_expiration_month();
+      credit_card_expiration_year = this.credit_card_expiration_year();
+      if (!balanced.card.isCardNumberValid(credit_card_number)) {
+        this.credit_card_number.error("Please enter a valid credit card number.");
+      }
+      if (!balanced.card.isExpiryValid(credit_card_expiration_month, credit_card_expiration_year)) {
+        this.credit_card_expiration.error("Please enter a valid expiration date.");
+      }
+      if (!balanced.card.isSecurityCodeValid(credit_card_number, credit_card_cvc)) {
+        this.credit_card_cvc.error("Please enter a valid CVC Number.");
+      }
+      if (this._hasError()) {
+        return false;
+      }
+      this.credit_card_number.is_valid(true);
+      this.credit_card_expiration.is_valid(true);
+      this.credit_card_cvc.is_valid(true);
+      this.is_saving(true);
+      _saveCardToUser = function(balanced_card_uri) {
+        return current_user.clone(["id"]).set({
+          balanced_card_uri: balanced_card_uri
+        }).save({
+          attributes: ["balanced_card_uri"],
+          complete: function() {
+            return _this.is_saving(false);
+          },
+          success: function(user) {
+            current_user.fill(user.unwrap());
+            _this.populateData();
+            return _this.alert("Successfully saved credit card information!");
+          },
+          error: function() {
+            return _this.alert.error("Error while saving credit card information");
+          }
+        });
+      };
+      balanced.card.create({
+        'card_number': credit_card_number,
+        'expiration_month': credit_card_expiration_month,
+        'expiration_year': credit_card_expiration_year,
+        'security_code': credit_card_cvc
+      }, function(response) {
+        switch (response.status) {
+          case 201:
+            return _saveCardToUser(response.data.uri);
+          default:
+            _this.alert.error("An error occurred while saving credit card information");
+        }
+        return _this.is_saving(false);
+      });
+      return false;
+    };
+
+    SettingsView.prototype.removeCreditCard = function() {
+      var current_user,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return;
+      }
+      if (!current_user.get('balanced_card_uri')) {
+        return;
+      }
+      if (this.is_saving()) {
+        return;
+      }
+      if (!confirm("Are you sure you want to remove your credit card?")) {
+        return;
+      }
+      this.is_saving(true);
+      return current_user.clone(["id"]).save({
+        params: {
+          "remove_credit_card": true
+        },
+        attributes: [],
+        success: function(user) {
+          current_user.fill(user.unwrap());
+          _this.populateData();
+          _this._clearValidations();
+          return _this.alert("Successfully removed credit card");
+        },
+        error: function() {
+          return _this.alert.error("There was an error while trying to remove your credit card");
+        },
+        complete: function() {
+          return _this.is_saving(false);
+        }
+      });
+    };
+
+    SettingsView.prototype.gotoPersonalInfomration = function() {
+      return Finch.navigate({
+        "showing": null
+      }, true);
+    };
+
+    SettingsView.prototype.gotoCreditCard = function() {
+      return Finch.navigate({
+        "showing": "credit_card"
+      }, true);
+    };
+
+    return SettingsView;
+
+  })(Falcon.View);
+
   SplashView = (function(_super) {
     __extends(SplashView, _super);
 
     function SplashView() {
-      _ref23 = SplashView.__super__.constructor.apply(this, arguments);
-      return _ref23;
+      _ref24 = SplashView.__super__.constructor.apply(this, arguments);
+      return _ref24;
     }
 
     SplashView.prototype.url = '#splash-tmpl';
@@ -1051,7 +1421,6 @@
       })).create({
         'attributes': ['soundcloud_access_token'],
         success: function(user) {
-          var _this = this;
           return (new Session).fetch({
             success: function(session) {
               return Application.login(session);
@@ -1077,8 +1446,8 @@
     __extends(StreamView, _super);
 
     function StreamView() {
-      _ref24 = StreamView.__super__.constructor.apply(this, arguments);
-      return _ref24;
+      _ref25 = StreamView.__super__.constructor.apply(this, arguments);
+      return _ref25;
     }
 
     StreamView.prototype.url = "#stream-tmpl";
@@ -1148,8 +1517,20 @@
 
   Finch.route("[/]stream", {
     setup: function() {
-      this.view = new StreamView;
-      return Application.setContentView(this.view);
+      return this.view = Application.setContentView(new StreamView);
+    }
+  });
+
+  Finch.route("[/]settings", {
+    setup: function() {
+      var _this = this;
+      this.view = Application.setContentView(new SettingsView);
+      return Finch.observe("showing", function(showing) {
+        if (showing === "credit_card") {
+          return _this.view.showCreditCard();
+        }
+        return _this.view.showPersonalInformation();
+      });
     }
   });
 
@@ -1159,6 +1540,9 @@
     },
     'gotoStream': function() {
       return Finch.navigate("/stream");
+    },
+    'gotoSettings': function() {
+      return Finch.navigate("/settings");
     }
   };
 

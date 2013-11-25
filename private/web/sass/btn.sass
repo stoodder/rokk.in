@@ -1,0 +1,64 @@
+.btn
+	+border-radius(2px)
+	+transition-duration(.1s)
+	display: inline-block
+	background-color: $black-lighter
+	font-size: 10px
+	text-transform: uppercase
+	padding: 10px 12px
+	font-weight: 600
+	cursor: pointer
+	color: $grey-lighter
+	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+	border: 1px solid mix( $black-lighter, $black-lightest)
+	outline: none
+	vertical-align: middle
+
+	i
+		margin-right: 4px
+		margin-left: -1px
+
+.btn:hover
+	color: mix( $grey-lighter, $grey-lightest )
+	background-color: mix( $black, $black-lighter, 25% )
+
+.btn[disabled],
+.btn[disabled]:hover
+	+opacity(.5)
+	cursor: default
+	background-color: $black-lighter
+	color: $grey-lighter
+
+.btn.btn-small
+	font-size: 9px
+	padding: 8px 10px
+
+	i
+		margin-right: 3px
+
+.btn.btn-link
+	background-color: transparent
+
+.btn.btn-primary,
+.btn.btn-primary[disabled],
+.btn.btn-primary[disabled]:hover
+	color: $teal
+
+.btn.btn-primary:hover
+	color: $teal-lighter
+
+.btn.btn-success,
+.btn.btn-success[disabled],
+.btn.btn-success[disabled]:hover
+	color: $green
+
+.btn.btn-success:hover
+	color: $green-lighter
+
+.btn.btn-danger
+.btn.btn-danger[disabled],
+.btn.btn-danger[disabled]:hover
+	color: $red
+
+.btn.btn-danger:hover
+	color: $red-lighter

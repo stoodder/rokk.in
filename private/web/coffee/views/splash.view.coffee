@@ -49,7 +49,7 @@ class SplashView extends Falcon.View
 
 		( new User({soundcloud_access_token}) ).create
 			'attributes': ['soundcloud_access_token']
-			success: (user) ->
+			success: (user) =>
 				( new Session ).fetch
 					success: (session) => Application.login( session )
 					complete: =>

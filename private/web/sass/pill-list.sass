@@ -1,0 +1,41 @@
+ul.pill-list
+	display: inline-block
+	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+	overflow: hidden
+	vertical-align: middle
+
+	li.pill-list-item.selected,
+	li.pill-list-item.selected:hover
+		color: $orange
+		cursor: default
+		background-color: mix( $black, $black-lighter )
+
+		i
+			color: $grey-lightest
+
+	li.pill-list-item:hover
+		color: $orange-lighter
+
+		i
+			color: $grey-lighter
+			
+	li.pill-list-item
+		+border-radius(2px)
+		+transition-duration(.1s)
+		float: left
+		font-size: 8px
+		text-transform: uppercase
+		color: $grey-lighter
+		font-weight: 600
+		letter-spacing: .09em
+		cursor: pointer
+		margin-right: 10px
+		padding: 5px 10px 6px 5px
+
+		i
+			display: inline-block
+			font-size: 16px
+			margin-right: 5px
+			height: 16px
+			vertical-align: middle
+			color: $grey-lighter

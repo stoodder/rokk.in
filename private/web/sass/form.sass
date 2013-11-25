@@ -1,0 +1,157 @@
+form.is_loading
+	.form-actions
+		background-position: center center
+
+form
+	padding: 0px
+	margin: 0px
+
+	.form-input
+		.form-input-control
+			position: relative
+
+			.input-hover
+				position: absolute
+				display: none
+				z-index: 2
+				top: 5px
+				right: 00px
+				height: 20px
+				font-size: 10px
+				text-transform: uppercase
+				padding: 0px 7px 0px 0px
+				line-height: 20px
+				font-weight: 600
+				color: $grey-darker
+				text-shadow: none
+				text-align: right
+
+			.input-hover:after
+				margin-left: 5px
+				font-family: $ionicons
+
+		.input-help-text:after
+			content: ""
+			position: absolute
+			right: 5px
+			bottom: 100%
+			border: 7px solid transparent
+			border-bottom-color: mix( $black, $black-lighter, 25% )
+
+		.input-help-text
+			+border-radius(2px)
+			position: relative
+			z-index: 3
+			display: none
+			font-size: 9px
+			font-weight: 500
+			color: $white-darkest
+			padding: 4px 15px 6px 15px
+			background-color: mix( $black, $black-lighter, 25% )
+			margin-top: 3px
+			line-height: 14px
+
+		.form-input-control.is_valid,
+		.form-input-control.has_error
+			.input-help-text
+				display: inline-block
+
+			.input-hover
+				display: block
+
+		.form-input-control.is_valid
+			.input-hover:after
+				content: "\f122" //Checkmark
+
+			.input-help-text.error-only
+				display: none
+
+		
+		.form-input-control.has_error
+			.input-hover:after
+				content: "\f12a" //Close
+
+			.input-help-text.success-only
+				display: none
+
+		.form-input-text
+			font-size: 12px
+			font-weight: 500
+
+			img
+				height: 25px
+				vertical-align: middle
+				margin-right: 10px
+
+	.form-actions
+		+border-radius(3px)
+		padding: 14px
+		background-color: mix( $black-lighter, $black-lightest )
+		margin-right: 10px
+		margin-top: 15px
+		overflow: hidden
+		background-image: url('/images/form-loader-tiny.gif')
+		background-position: -1000px -1000px
+		background-repeat: no-repeat
+
+
+form.form-standard
+	max-width: 500px
+	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+
+	.form-input.two-third
+		width: 66.667%
+
+	.form-input.half
+		width: 50.000%
+
+	.form-input.third
+		width: 33.333%
+
+	.form-input.fourth
+		width: 25.000%
+
+	.form-input
+		display: inline-block
+		width: 100.00%
+		margin-bottom: 15px
+		padding-right: 10px
+		vertical-align: top
+
+		label.form-input-label
+			display: block
+			font-size: 8px 
+			text-transform: uppercase
+			color: $grey
+			font-weight: 600
+			letter-spacing: .09em
+			margin-bottom: 7px
+
+		.form-input-control
+			overflow: hidden
+
+			input, textarea
+				position: static
+				z-index: 1
+				width: 100%
+
+			.input-help-text
+				float: right
+
+	.form-input + .form-divider
+		margin-top: 3px
+
+	.form-divider
+		height: 2px
+		overflow: hidden
+		clear: both
+		border-top: 1px solid mix( $black, $black-lighter, 25% )
+		border-bottom: 1px solid mix( $black-lighter, $black-lightest )
+		margin: 10px 10px 15px 0px
+
+	.form-spacer.fourth
+		width: 25%
+
+	.form-spacer
+		display: inline-block
+		width: 100%

@@ -32,6 +32,8 @@ Padrino.configure_apps do
   set :protect_from_csrf, false
 
   set :haml, :ugly => true
+
+  Balanced.configure(ENV['BALANCED_API_SECRET_KEY'])
 end
 
 # Mounts the core application for this project

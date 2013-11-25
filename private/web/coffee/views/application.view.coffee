@@ -19,6 +19,7 @@ class ApplicationView extends Falcon.View
 
 		'is_dashboard_selected': -> @content_view() instanceof DashboardView
 		'is_stream_selected': -> @content_view() instanceof StreamView
+		'is_settings_selected': -> @content_view() instanceof SettingsView
 	#END observables
 
 	checkSession: ->
@@ -117,10 +118,12 @@ class ApplicationView extends Falcon.View
 	#END connectResponse
 
 	setContentView: (view) ->
-		return unless Falcon.isView( view )
+		return null unless Falcon.isView( view )
 
 		@content_view( view )
 		@notifySubscribers()
+
+		return view
 	#END setContentView
 
 	notifySubscribers: ->
