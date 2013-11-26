@@ -48,6 +48,22 @@ RokkIn::App.controller do
 				error_response(400, "An error occurred while trying to remove the credit card")
 			end
 		end
+
+		if json['balanced_bank_account_uri']
+			begin
+				@user.set_balanced_bank_account_uri!(json['balanced_bank_account_uri'])
+			rescue => e
+				require 'pp'
+				pp e
+				error_response(400, "Error while saving bank account information")
+			end
+		elsif params['remove_bank_account']
+			begin
+				@user.remove_bank_account!()
+			rescue => e
+				error_response(400, "An error occurred while trying to remove the bank account")
+			end
+		end
 		
 		render "user/one", :locals => {:show_full_user => true}
 	end

@@ -674,6 +674,13 @@
       "soundcloud_id": "",
       "balanced_card_uri": "",
       "balanced_customer_uri": "",
+      "balanced_bank_account_uri": "",
+      "card_last_4": "",
+      "card_type": "",
+      "card_expiration_month": 0,
+      "card_expiration_year": 0,
+      "bank_name": "",
+      "bank_account_number": "",
       "full_name": "",
       "avatar_url": "",
       "created_at": null,
@@ -1083,6 +1090,7 @@
       'current_user': null,
       'is_showing_personal_information': false,
       'is_showing_credit_card': false,
+      'is_showing_bank_account': false,
       'current_credit_card_last_4': '',
       'current_credit_card_type': '',
       'has_credit_card': function() {
@@ -1128,7 +1136,15 @@
           this.credit_card_expiration_month(month);
           return this.credit_card_expiration_year(year);
         }
-      }
+      },
+      'current_bank_name': "",
+      'current_bank_account_number': "",
+      'has_bank_account': function() {
+        return !_.isEmpty(this.current_bank_name()) || !_.isEmpty(this.current_bank_account_number());
+      },
+      'bank_account_name': "",
+      'bank_account_account_number': "",
+      'bank_account_routing_number': ""
     };
 
     SettingsView.prototype.initialize = function() {
@@ -1137,6 +1153,9 @@
       this.credit_card_number.classify("validateable");
       this.credit_card_expiration.classify("validateable");
       this.credit_card_cvc.classify("validateable");
+      this.bank_account_name.classify("validateable");
+      this.bank_account_account_number.classify("validateable");
+      this.bank_account_routing_number.classify("validateable");
       ko.computed(function() {
         var is_valid, number;
         number = _this.credit_card_number();
@@ -1156,6 +1175,21 @@
         number = _this.credit_card_number();
         cvc = _this.credit_card_cvc();
         return _this.credit_card_cvc.is_valid(balanced.card.isSecurityCodeValid(number, cvc));
+      });
+      ko.computed(function() {
+        var name;
+        name = _this.bank_account_name();
+        return _this.bank_account_name.is_valid(!_.isEmpty(name));
+      });
+      ko.computed(function() {
+        var account_number;
+        account_number = _this.bank_account_account_number();
+        return _this.bank_account_account_number.is_valid(!_.isEmpty(account_number));
+      });
+      ko.computed(function() {
+        var routing_number;
+        routing_number = _this.bank_account_routing_number();
+        return _this.bank_account_routing_number.is_valid(balanced.bankAccount.validateRoutingNumber(routing_number));
       });
       Application.on("update:user", this.updateCurrentUser, this);
       return this.showPersonalInformation();
@@ -1178,21 +1212,31 @@
       if ((current_user = this.current_user()) instanceof User) {
         this.current_credit_card_last_4(current_user.get('card_last_4'));
         this.current_credit_card_type(current_user.get('card_type'));
+        this.current_bank_name(current_user.get('bank_name'));
+        return this.current_bank_account_number(current_user.get('bank_account_number'));
       } else {
         this.current_credit_card_last_4("");
         this.current_credit_card_type("");
+        this.current_bank_name("");
+        return this.current_bank_account_number("");
       }
-      this.credit_card_number("");
-      this.credit_card_expiration("");
-      return this.credit_card_cvc("");
     };
 
     SettingsView.prototype._reset = function() {
       this.is_showing_personal_information(false);
       this.is_showing_credit_card(false);
+      this.is_showing_bank_account(false);
+      return this._resetFields();
+    };
+
+    SettingsView.prototype._resetFields = function() {
+      this.alert("");
       this.credit_card_number("");
       this.credit_card_expiration("");
       this.credit_card_cvc("");
+      this.bank_account_name("");
+      this.bank_account_account_number("");
+      this.bank_account_routing_number("");
       return this._clearValidations();
     };
 
@@ -1200,12 +1244,17 @@
       this.alert.clearValidations();
       this.credit_card_number.clearValidations();
       this.credit_card_expiration.clearValidations();
-      return this.credit_card_cvc.clearValidations();
+      this.credit_card_cvc.clearValidations();
+      this.bank_account_name.clearValidations();
+      this.bank_account_account_number.clearValidations();
+      return this.bank_account_routing_number.clearValidations();
     };
 
     SettingsView.prototype._hasError = function() {
       if (this.is_showing_credit_card()) {
         return this.credit_card_number.has_error() || this.credit_card_expiration.has_error() || this.credit_card_cvc.has_error();
+      } else if (this.is_showing_bank_account()) {
+        return this.bank_account_routing_number.has_error() || this.bank_account_account_number.has_error() || this.bank_account_name.has_error();
       }
       return false;
     };
@@ -1224,17 +1273,17 @@
       if (this.is_saving()) {
         return false;
       }
-      this.credit_card_number("");
-      this.credit_card_expiration("");
-      this.credit_card_cvc("");
-      return false;
+      if (!confirm("Are you sure you want to cancel saving your credit card?")) {
+        return false;
+      }
+      return this._resetFields();
     };
 
     SettingsView.prototype.saveCreditCard = function() {
       var credit_card_cvc, credit_card_expiration, credit_card_expiration_month, credit_card_expiration_year, credit_card_number, current_user, _saveCardToUser,
         _this = this;
       if (!((current_user = this.current_user()) instanceof User)) {
-        return;
+        return false;
       }
       if (this.is_saving()) {
         return false;
@@ -1272,6 +1321,7 @@
           success: function(user) {
             current_user.fill(user.unwrap());
             _this.populateData();
+            _this._resetFields();
             return _this.alert("Successfully saved credit card information!");
           },
           error: function() {
@@ -1300,19 +1350,19 @@
       var current_user,
         _this = this;
       if (!((current_user = this.current_user()) instanceof User)) {
-        return;
+        return false;
       }
       if (!current_user.get('balanced_card_uri')) {
-        return;
+        return false;
       }
       if (this.is_saving()) {
-        return;
+        return false;
       }
       if (!confirm("Are you sure you want to remove your credit card?")) {
-        return;
+        return false;
       }
       this.is_saving(true);
-      return current_user.clone(["id"]).save({
+      current_user.clone(["id"]).save({
         params: {
           "remove_credit_card": true
         },
@@ -1330,6 +1380,137 @@
           return _this.is_saving(false);
         }
       });
+      return false;
+    };
+
+    SettingsView.prototype.showBankAccount = function() {
+      this._reset();
+      return this.is_showing_bank_account(true);
+    };
+
+    SettingsView.prototype.cancelSaveBankAccount = function() {
+      if (this.is_saving()) {
+        return false;
+      }
+      if (!confirm("Are you sure you want to cancel saving your bank account?")) {
+        return false;
+      }
+      return this._resetFields();
+    };
+
+    SettingsView.prototype.saveBankAccount = function() {
+      var account_number, bank_account_obj, current_user, name, routing_number, validations, _saveBankAccountToUser,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return false;
+      }
+      if (this.is_saving()) {
+        return false;
+      }
+      this._clearValidations();
+      routing_number = this.bank_account_routing_number();
+      account_number = this.bank_account_account_number();
+      name = this.bank_account_name();
+      if (_.isEmpty(routing_number)) {
+        this.bank_account_routing_number.error("Please enter a routing number");
+      }
+      if (_.isEmpty(account_number)) {
+        this.bank_account_account_number.error("Please enter a account number");
+      }
+      if (_.isEmpty(name)) {
+        this.bank_account_name.error("Please enter a name");
+      }
+      if (this._hasError()) {
+        return false;
+      }
+      bank_account_obj = {
+        routing_number: routing_number,
+        account_number: account_number,
+        name: name
+      };
+      validations = balanced.bankAccount.validate(bank_account_obj);
+      if (validations.routing_number != null) {
+        this.bank_account_routing_number.error(validations.routing_number);
+      }
+      if (validations.account_number != null) {
+        this.bank_account_account_number.error(validations.account_number);
+      }
+      if (validations.name != null) {
+        this.bank_account_name.error(validations.name);
+      }
+      if (this._hasError()) {
+        return false;
+      }
+      this.bank_account_routing_number.is_valid(true);
+      this.bank_account_account_number.is_valid(true);
+      this.bank_account_name.is_valid(true);
+      this.is_saving(true);
+      _saveBankAccountToUser = function(balanced_bank_account_uri) {
+        return current_user.clone(["id"]).set({
+          balanced_bank_account_uri: balanced_bank_account_uri
+        }).save({
+          attributes: ["balanced_bank_account_uri"],
+          complete: function() {
+            return _this.is_saving(false);
+          },
+          success: function(user) {
+            current_user.fill(user.unwrap());
+            _this.populateData();
+            _this._resetFields();
+            return _this.alert("Successfully saved bank account information!");
+          },
+          error: function() {
+            return _this.alert.error("Error while saving bank account information");
+          }
+        });
+      };
+      balanced.bankAccount.create(bank_account_obj, function(response) {
+        switch (response.status) {
+          case 201:
+            return _saveBankAccountToUser(response.data.uri);
+          default:
+            _this.alert.error("An error occurred while saving bank account information");
+        }
+        return _this.is_saving(false);
+      });
+      return false;
+    };
+
+    SettingsView.prototype.removeBankAccount = function() {
+      var current_user,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return false;
+      }
+      if (!current_user.get('balanced_bank_account_uri')) {
+        return false;
+      }
+      if (this.is_saving()) {
+        return false;
+      }
+      if (!confirm("Are you sure you want to remove your bank account?")) {
+        return false;
+      }
+      this.is_saving(true);
+      current_user.clone(["id"]).save({
+        params: {
+          "remove_bank_account": true
+        },
+        attributes: [],
+        success: function(user) {
+          current_user.fill(user.unwrap());
+          _this.populateData();
+          _this._clearValidations();
+          return _this.alert("Successfully removed bank account");
+        },
+        error: function() {
+          return _this.alert.error("There was an error while trying to remove your credit card");
+        },
+        complete: function() {
+          return _this.is_saving(false);
+        }
+      });
+      return false;
     };
 
     SettingsView.prototype.gotoPersonalInfomration = function() {
@@ -1341,6 +1522,12 @@
     SettingsView.prototype.gotoCreditCard = function() {
       return Finch.navigate({
         "showing": "credit_card"
+      }, true);
+    };
+
+    SettingsView.prototype.gotoBankAccount = function() {
+      return Finch.navigate({
+        "showing": "bank_account"
       }, true);
     };
 
@@ -1528,6 +1715,9 @@
       return Finch.observe("showing", function(showing) {
         if (showing === "credit_card") {
           return _this.view.showCreditCard();
+        }
+        if (showing === "bank_account") {
+          return _this.view.showBankAccount();
         }
         return _this.view.showPersonalInformation();
       });

@@ -20,6 +20,7 @@ Finch.route "[/]settings",
 
 		Finch.observe "showing", (showing) =>
 			return @view.showCreditCard() if showing is "credit_card"
+			return @view.showBankAccount() if showing is "bank_account"
 			@view.showPersonalInformation()
 		#END observe
 	#END setup

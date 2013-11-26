@@ -4,15 +4,21 @@
 			%li.pill-list-item(data-bind="css: {'selected': $view.is_showing_personal_information}, click: $view.gotoPersonalInfomration")
 				%i.ion-ios7-information
 				Personal Information
+
 			%li.pill-list-item(data-bind="css: {'selected': $view.is_showing_credit_card}, click: $view.gotoCreditCard")
 				%i.ion-card
 				Credit Card
+
+			%li.pill-list-item(data-bind="css: {'selected': $view.is_showing_bank_account}, click: $view.gotoBankAccount")
+				%i.ion-ios7-box
+				Bank Account
+
 	-ko("if: $view.is_showing_personal_information") do
 		Personal Information
 
 	-ko("if: $view.is_showing_credit_card") do
 		%form.form-standard(data-bind="submit: $view.saveCreditCard, css: {'is_loading': $view.is_saving}")
-			-ko("if: $view.has_credit_card") do
+			-ko("if: $view.has_credit_card()") do
 				.form-input<>
 					%label.form-input-label Current Credit Card
 					.form-input-text
@@ -37,7 +43,7 @@
 					.input-help-text.error-only(data-bind="text: $view.credit_card_expiration.error")
 
 
-			.form-input.third
+			.form-input.third<>
 				%label.form-input-label CVC
 				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_cvc.is_valid, 'has_error': $view.credit_card_cvc.has_error}")
 					%input(type="text" placeholder="123" data-bind="value: $view.credit_card_cvc, valueUpdate: 'afterkeydown'")
@@ -45,7 +51,54 @@
 					.input-help-text.error-only(data-bind="text: $view.credit_card_cvc.error")
 
 			.form-actions
-				%button.btn.pull-left(data-bind="disable: $view.is_saving")
+				%button.btn.pull-left(data-bind="disable: $view.is_saving, click: $view.cancelSaveCreditCard")
+					%i.ion-close
+					Cancel
+				%button.btn.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")
+					%i.ion-checkmark
+					Save
+
+	-ko("if: $view.is_showing_bank_account") do
+		%form.form-standard(data-bind="submit: $view.saveBankAccount, css: {'is_loading': $view.is_saving}")
+			-ko("if: $view.has_bank_account") do
+				.form-input<>
+					%label.form-input-label Current Bank Account
+					.form-input-text
+						.btn.btn-small.pull-right(data-bind="click: $view.removeBankAccount")
+							%i.ion-close
+							Remove
+						%div
+							%span(data-bind="text: $view.current_bank_name")
+						%div
+							%span(data-bind="text: $view.current_bank_account_number")
+				.form-divider
+			
+			.form-input<>
+				%label.form-input-label Name on Bank Account
+
+				.form-input-control(data-bind="css: {'is_valid': $view.bank_account_name.is_valid, 'has_error': $view.bank_account_name.has_error}")
+					%input(type="text" placeholder="John Doe" data-bind="value: $view.bank_account_name, valueUpdate: 'afterkeydown'")
+					.input-hover
+					.input-help-text.error-only(data-bind="text: $view.bank_account_name.error")
+
+			.form-input.half<>
+				%label.form-input-label Bank Routing Number
+
+				.form-input-control(data-bind="css: {'is_valid': $view.bank_account_routing_number.is_valid, 'has_error': $view.bank_account_routing_number.has_error}")
+					%input(type="text" placeholder="01234567" data-bind="value: $view.bank_account_routing_number, valueUpdate: 'afterkeydown'")
+					.input-hover
+					.input-help-text.error-only(data-bind="text: $view.bank_account_routing_number.error")
+
+			.form-input.half<>
+				%label.form-input-label Bank Account Number
+
+				.form-input-control(data-bind="css: {'is_valid': $view.bank_account_account_number.is_valid, 'has_error': $view.bank_account_account_number.has_error}")
+					%input(type="text" placeholder="0123456789" data-bind="value: $view.bank_account_account_number, valueUpdate: 'afterkeydown'")
+					.input-hover
+					.input-help-text.error-only(data-bind="text: $view.bank_account_account_number.error")
+
+			.form-actions
+				%button.btn.pull-left(data-bind="disable: $view.is_saving, click: $view.cancelSaveBankAccount")
 					%i.ion-close
 					Cancel
 				%button.btn.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")

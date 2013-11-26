@@ -22,23 +22,6 @@ class User < Sequel::Model
 		self.save()
 	end
 
-	def remove_credit_card!
-		if self.balanced_card_uri
-			#Remove the card from balanced
-			Balanced::Card.find(self.balanced_card_uri).unstore
-
-			#Update our internal data
-			self.balanced_card_uri = nil
-			self.card_last_4 = nil
-			self.card_type = nil
-			self.card_expiration_month = nil
-			self.card_expiration_year = nil
-
-			#Save ourselves
-			self.save()
-		end
-	end
-
 	def set_balanced_card_uri!(card_uri)
 		#Add the card on balanced
 		customer = Balanced::Customer.find(self.balanced_customer_uri)
@@ -57,6 +40,56 @@ class User < Sequel::Model
 
 		#Save ourselves
 		self.save()
+	end
+
+	def remove_credit_card!
+		if self.balanced_card_uri
+			#Remove the card from balanced
+			Balanced::Card.find(self.balanced_card_uri).unstore
+
+			#Update our internal data
+			self.balanced_card_uri = nil
+			self.card_last_4 = nil
+			self.card_type = nil
+			self.card_expiration_month = nil
+			self.card_expiration_year = nil
+
+			#Save ourselves
+			self.save()
+		end
+	end
+
+	def set_balanced_bank_account_uri!(bank_account_uri)
+		#Add the bank on balanced
+		customer = Balanced::Customer.find(self.balanced_customer_uri)
+		customer.add_bank_account(bank_account_uri)
+		bank_account = Balanced::BankAccount.find(bank_account_uri)
+
+		#Remove the Previous Bank Account
+		Balanced::BankAccount.find(self.balanced_bank_account_uri).unstore if self.balanced_bank_account_uri
+
+		#Update our internal data
+		self.balanced_bank_account_uri = bank_account.uri
+		self.bank_name = bank_account.bank_name
+		self.bank_account_number = bank_account.account_number
+
+		#Save ourselves
+		self.save()
+	end
+
+	def remove_bank_account!
+		if self.balanced_bank_account_uri
+			#Remove the card from balanced
+			Balanced::BankAccount.find(self.balanced_bank_account_uri).unstore
+
+			#Update our internal data
+			self.balanced_bank_account_uri = nil
+			self.bank_name = nil
+			self.bank_account_number = nil
+
+			#Save ourselves
+			self.save()
+		end
 	end
 	
     include Shield::Model
