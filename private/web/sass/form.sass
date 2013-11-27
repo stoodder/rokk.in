@@ -22,7 +22,7 @@ form
 				padding: 0px 7px 0px 0px
 				line-height: 20px
 				font-weight: 600
-				color: $grey-darker
+				color: $grey
 				text-shadow: none
 				text-align: right
 
@@ -36,7 +36,7 @@ form
 			right: 5px
 			bottom: 100%
 			border: 7px solid transparent
-			border-bottom-color: mix( $black, $black-lighter, 25% )
+			border-bottom-color: $shadow
 
 		.input-help-text
 			+border-radius(2px)
@@ -45,9 +45,9 @@ form
 			display: none
 			font-size: 9px
 			font-weight: 500
-			color: $white-darkest
+			color: $black-lightest
 			padding: 4px 15px 6px 15px
-			background-color: mix( $black, $black-lighter, 25% )
+			background-color: $shadow
 			margin-top: 3px
 			line-height: 14px
 
@@ -89,7 +89,7 @@ form
 	.form-actions
 		+border-radius(3px)
 		padding: 14px
-		background-color: mix( $black-lighter, $black-lightest )
+		background-color: $highlight
 		margin-right: 10px
 		margin-top: 15px
 		overflow: hidden
@@ -99,8 +99,8 @@ form
 
 
 form.form-standard
-	max-width: 500px
-	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+	max-width: 700px
+	text-shadow: 0px 1px 0px $highlight
 
 	.form-input.two-third
 		width: 66.667%
@@ -125,7 +125,7 @@ form.form-standard
 			display: block
 			font-size: 9px 
 			text-transform: uppercase
-			color: mix( $grey, $grey-darker )
+			color: $grey-darker
 			font-weight: 500
 			letter-spacing: .15em
 			margin-bottom: 7px
@@ -150,8 +150,8 @@ form.form-standard
 		height: 2px
 		overflow: hidden
 		clear: both
-		border-top: 1px solid mix( $black, $black-lighter, 25% )
-		border-bottom: 1px solid mix( $black-lighter, $black-lightest )
+		border-top: 1px solid $shadow
+		border-bottom: 1px solid $highlight
 		margin: 10px 10px 15px 0px
 
 	.form-spacer.fourth

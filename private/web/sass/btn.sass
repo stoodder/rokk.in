@@ -1,16 +1,17 @@
 .btn
+	+inner-box-shadow(0px, 1px, 0px, $highlight )
 	+border-radius(3px)
 	+transition-duration(.1s)
 	display: inline-block
-	background-color: $black-lighter
+	background-color: $grey-lightest
 	font-size: 10px
 	text-transform: uppercase
 	padding: 10px 12px
 	font-weight: 600
 	cursor: pointer
-	color: $grey-lighter
-	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
-	border: 1px solid mix( $black-lighter, $black-lightest)
+	color: $grey-darkest
+	text-shadow: 0px 1px 0px $highlight
+	border: 1px solid $shadow
 	outline: none
 	vertical-align: middle
 
@@ -19,8 +20,9 @@
 		margin-left: -1px
 
 .btn:hover
-	color: mix( $grey-lighter, $grey-lightest )
-	background-color: mix( $black, $black-lighter, 25% )
+	+inner-box-shadow(0px, 1px, 0px, $white-darkest )
+	color: mix( $black-lightest, $grey-darkest )
+	background-color: mix( $grey-lightest, $white-darkest, 75% )
 
 .btn[disabled],
 .btn[disabled]:hover
@@ -42,10 +44,10 @@
 .btn.btn-primary,
 .btn.btn-primary[disabled],
 .btn.btn-primary[disabled]:hover
-	color: $teal
+	color: $teal-darker
 
 .btn.btn-primary:hover
-	color: $teal-lighter
+	color: $teal
 
 .btn.btn-success,
 .btn.btn-success[disabled],

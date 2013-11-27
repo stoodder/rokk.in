@@ -36,9 +36,6 @@
 			-ko("view: $view.splash_view")
 		-ko("if: $view.is_logged_in") do
 			#header
-				.logo
-					rokk
-					.highlight<> .in
 				%form.search-form(data-bind="submit: $view.searchSubmit")<>
 					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")
 					%i.ion-search
@@ -48,10 +45,11 @@
 						%img(data-bind="src: Helpers.resizeImage(avatar_url, 'small')")
 						-ko("text: full_name")
 
-					.logout(title="Logout" data-bind="click: $view.logout")
-						%i.ion-power
-
 			#sidebar
+				.logo
+					rokk
+					.highlight<> .in
+
 				%ul.sidebar-menu
 					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_dashboard_selected}, click: Router.gotoDashboard")
 						%i.ion-compass
@@ -68,6 +66,10 @@
 					%li.sidebar-menu-item(data-bind="css: {'selected': $view.is_settings_selected}, click: Router.gotoSettings")
 						%i.ion-gear-b
 						Settings
+
+				.logout(title="Logout" data-bind="click: $view.logout")
+					%i.ion-power
+					Logout
 
 			#content(data-bind="view: $view.content_view")
 %template#dashboard-tmpl	
@@ -213,14 +215,15 @@
 
 %template#splash-tmpl
 	#splash
-		.logo
-			rokk
-			.highlight<> .in
-		.tagline
-			Fund &amp; Discover Great Music
-		.login-button(data-bind="click: $view.connect")
-			%i.icon-soundcloud
-			Sign In with SoundCloud
+		.splash-inner
+			.logo
+				rokk
+				.highlight<> .in
+			.tagline
+				Fund &amp; Discover Great Music
+			.login-button(data-bind="click: $view.connect")
+				%i.icon-soundcloud
+				Sign In with SoundCloud
 %template#stream-tmpl
 	-ko("if: $view.is_loading") do
 		.loader

@@ -1,19 +1,19 @@
 input:focus,
 textarea:focus
-	background-color: $grey-lightest
-	color: $black-lighter
+	background-color: $white
+	color: $black-lightest
 
 textarea::-webkit-input-placeholder,
 input::-webkit-input-placeholder
-	color: $grey-darkest
+	color: $grey-lighter
 
 input,
 textarea
-	+box-shadow(0px, 1px, 0px, mix( $black, $black-lighter, 25% ) )
+	+box-shadow(0px, 1px, 0px, $shadow )
 	+border-radius(2px)
 	+transition-duration(.1s)
 	border: 0px
-	background-color: $grey
+	background-color: $white-darker
 	padding: 4px 9px
 	line-height: 20px
 	font-size: 12px

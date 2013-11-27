@@ -1,6 +1,5 @@
 ul.pill-list
 	display: inline-block
-	text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
 	overflow: hidden
 	vertical-align: middle
 
@@ -8,10 +7,10 @@ ul.pill-list
 	li.pill-list-item.selected:hover
 		color: $orange
 		cursor: default
-		background-color: mix( $black, $black-lighter )
+		background-color: $grey-lightest
 
 		i
-			color: $grey-lightest
+			color: $grey
 
 	li.pill-list-item:hover
 		color: $orange-lighter
@@ -25,13 +24,14 @@ ul.pill-list
 		float: left
 		font-size: 10px
 		text-transform: uppercase
-		color: $grey-lighter
+		color: $grey
 		font-weight: 500
 		letter-spacing: .09em
 		cursor: pointer
 		margin-right: 10px
 		padding: 5px 10px
 		line-height: 16px
+		text-shadow: 0px 1px 0px $highlight
 
 		i
 			display: inline-block

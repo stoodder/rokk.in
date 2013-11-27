@@ -1,31 +1,17 @@
 #header
-	+box-shadow(0px, 1px, 0px, mix( $black-lightest, $black-lighter ) )
+	+box-shadow(0px, 1px, 0px, $highlight)
 	position: fixed
 	z-index: 2
 	top: 0px
-	left: 25px
-	right: 25px
+	left: 235px
+	right: 10px
 	height: 61px
-	padding: 0px
-	line-height: 60px
-	background-color: $black-lighter
-	background-color: $black-lighter
-	border-bottom: 1px solid mix( $black, $black-lighter, 25% )
-
-	.logo
-		display: inline-block
-		font-family: $logo-font
-		font-size: 28px
-		color: $white-darkest
-		letter-spacing: .05em
-		vertical-align: middle
-		width: 150px
-		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
-
-		.highlight
-			display: inline
-			color: $orange
-			font-family: $logo-font
+	line-height: 50px
+	border-bottom: 1px solid $shadow
+	padding: 5px 15px 0px 15px
+	color: $grey-darkest
+	background-color: mix( $white-darkest, $grey-lightest )
+	background-color: rgba( mix( $white-darkest, $grey-lightest ), .95 )
 
 	form.search-form
 		position: relative
@@ -43,7 +29,7 @@
 			width: 30px
 			line-height: 30px
 			text-align: center
-			color: $grey-darkest
+			color: $grey-lighter
 
 		input
 			height: 30px
@@ -54,28 +40,11 @@
 	.mini-profile
 		display: inline-block
 		font-size: 11px
-		color: $white-darkest
-		font-weight: bold
+		font-weight: 500
+		text-shadow: 0px 1px 0px $white
 
 		img
 			+border-radius( 2px )
 			vertical-align: middle
 			height: 25px
 			margin-right: 10px
-	
-	.logout:hover
-		color: $orange
-
-	.logout
-		+transition-duration(.1s)
-		display: inline-block
-		font-size: 24px
-		color: $grey-darkest
-		cursor: pointer
-		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
-		width: 30px
-		margin-left: 30px
-		text-align: right
-
-		i
-			vertical-align: middle
