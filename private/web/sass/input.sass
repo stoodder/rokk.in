@@ -5,7 +5,7 @@ textarea:focus
 
 textarea::-webkit-input-placeholder,
 input::-webkit-input-placeholder
-	color: $grey-lighter
+	color: mix( $grey, $grey-lighter )
 
 input,
 textarea
@@ -13,7 +13,7 @@ textarea
 	+border-radius(2px)
 	+transition-duration(.1s)
 	border: 0px
-	background-color: $white-darker
+	background-color: mix( $white, $white-darker, 25% )
 	padding: 4px 9px
 	line-height: 20px
 	font-size: 12px
