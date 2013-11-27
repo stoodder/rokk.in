@@ -1,6 +1,7 @@
 Finch.route "/",
 	setup: ->
 		Application.checkSession()
+		Finch.observe "query", (query) -> Application.search( query )
 	#END setup
 
 	load: ->
@@ -26,8 +27,17 @@ Finch.route "[/]settings",
 	#END setup
 #END settings
 
+Finch.route "[/]search",
+	setup: ->
+		@view = Application.setContentView( new SearchView )
+
+		Finch.observe "query", (query) => @view.updateQuery( query )
+	#END setup
+#END search
+
 @Router = Router =
 	'gotoDashboard': -> Finch.navigate("/")
 	'gotoStream': -> Finch.navigate("/stream")
 	'gotoSettings': -> Finch.navigate("/settings")
+	'gotoSearch': (params) -> Finch.navigate("/search", params, true)
 #END Router

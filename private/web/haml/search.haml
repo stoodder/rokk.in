@@ -1,0 +1,28 @@
+%template#search-tmpl
+	.content-row
+		.content-column.one-fourth<>
+			.content-title Artists
+			-ko("if: $view.is_loading_users") do
+				.loader
+			-ko("ifnot: $view.is_loading_users") do
+				%ul.artist-list(data-bind="foreach: $view.sc_users")
+					%li.artist-list-item
+						.artist-avatar
+							%img(data-bind="src: Helpers.resizeImage(avatar_url, 'badge')")
+						.artist-name
+							-ko("text: full_name")
+							%small(data-bind="text: username")
+						.artist-stats
+							%i.ion-ios7-people
+							-ko("text: followers_count")
+
+							%i.ion-radio-waves
+							-ko("text: track_count")
+		.content-column.three-fourth<>
+			.content-title Tracks
+			-ko("if: $view.is_loading_tracks") do
+				.loader
+			-ko("ifnot: $view.is_loading_tracks") do
+				%ul(data-bind="foreach: $view.sc_tracks")
+					%li(data-bind="text: title")
+	

@@ -20,6 +20,9 @@ class ApplicationView extends Falcon.View
 		'is_dashboard_selected': -> @content_view() instanceof DashboardView
 		'is_stream_selected': -> @content_view() instanceof StreamView
 		'is_settings_selected': -> @content_view() instanceof SettingsView
+		'is_search_selected': -> @content_view() instanceof SearchView
+
+		'search_query': ''
 	#END observables
 
 	checkSession: ->
@@ -80,7 +83,6 @@ class ApplicationView extends Falcon.View
 
 		#Execute the actual connect
 		dialog = SC.connect( -> )
-		console.log( dialog )
 
 		setTimeout ->
 			return unless _connect_options is options
@@ -121,7 +123,6 @@ class ApplicationView extends Falcon.View
 		return null unless Falcon.isView( view )
 
 		@content_view( view )
-		@notifySubscribers()
 
 		return view
 	#END setContentView
@@ -130,4 +131,24 @@ class ApplicationView extends Falcon.View
 		return unless Falcon.isView( content_view = @content_view() )
 		@trigger("update:user", @current_user())
 	#END notifySubscribers
+
+	searchSubmit: ->
+		@search( @search_query() )
+		return false
+	#END searchSubmit
+
+	search: (query) ->
+		if _.isEmpty( query )
+			@search_query("")
+			#TODO: Update search results if search screen is being shown
+		else
+			query ?= ""
+			query = @search_query() unless _.isString( query )
+			query = _.trim( query )
+
+			@search_query( query )
+
+			Router.gotoSearch({query})
+		#END if
+	#END search
 #END ApplicationView

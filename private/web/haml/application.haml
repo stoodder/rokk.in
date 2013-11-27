@@ -9,13 +9,13 @@
 				.logo
 					rokk
 					.highlight<> .in
-				%form.search-form<>
-					%input(type="text" placeholder="Search...")
+				%form.search-form(data-bind="submit: $view.searchSubmit")<>
+					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")
 					%i.ion-search
 
 				.pull-right
 					.mini-profile(data-bind="with: $view.current_user")
-						%img(data-bind="src: Helpers.resize_image(avatar_url, 'small')")
+						%img(data-bind="src: Helpers.resizeImage(avatar_url, 'small')")
 						-ko("text: full_name")
 
 					.logout(title="Logout" data-bind="click: $view.logout")

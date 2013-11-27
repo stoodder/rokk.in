@@ -1,5 +1,5 @@
 (function() {
-  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, SearchView, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref26, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -164,7 +164,7 @@
     		* original:     (originally uploaded image)
     */
 
-    'resize_image': function(avatar_url, size) {
+    resizeImage: function(avatar_url, size) {
       var _ref1;
       avatar_url = (_ref1 = ko.unwrap(avatar_url)) != null ? _ref1 : "";
       return avatar_url.replace("-large.", "-" + size + ".");
@@ -715,6 +715,27 @@
       return SoundCloudModel.prototype.sync.call(this, type, options, context);
     };
 
+    SoundCloudCollection.prototype.search = function(params, options) {
+      if (_.isString(params)) {
+        params = {
+          'q': params
+        };
+      }
+      if (!_.isObject(params)) {
+        params = {};
+      }
+      if (_.isFunction(options)) {
+        options = {
+          success: options
+        };
+      }
+      if (!_.isObject(options)) {
+        options = {};
+      }
+      options.params = params;
+      return this.fetch(options);
+    };
+
     return SoundCloudCollection;
 
   })(Falcon.Collection);
@@ -891,7 +912,11 @@
       },
       'is_settings_selected': function() {
         return this.content_view() instanceof SettingsView;
-      }
+      },
+      'is_search_selected': function() {
+        return this.content_view() instanceof SearchView;
+      },
+      'search_query': ''
     };
 
     ApplicationView.prototype.checkSession = function() {
@@ -972,7 +997,6 @@
       }
       _connect_options = options;
       dialog = SC.connect(function() {});
-      console.log(dialog);
       setTimeout(function() {
         if (_connect_options !== options) {
           return;
@@ -1017,7 +1041,6 @@
         return null;
       }
       this.content_view(view);
-      this.notifySubscribers();
       return view;
     };
 
@@ -1027,6 +1050,29 @@
         return;
       }
       return this.trigger("update:user", this.current_user());
+    };
+
+    ApplicationView.prototype.searchSubmit = function() {
+      this.search(this.search_query());
+      return false;
+    };
+
+    ApplicationView.prototype.search = function(query) {
+      if (_.isEmpty(query)) {
+        return this.search_query("");
+      } else {
+        if (query == null) {
+          query = "";
+        }
+        if (!_.isString(query)) {
+          query = this.search_query();
+        }
+        query = _.trim(query);
+        this.search_query(query);
+        return Router.gotoSearch({
+          query: query
+        });
+      }
     };
 
     return ApplicationView;
@@ -1047,8 +1093,9 @@
       "current_user": null
     };
 
-    DashboardView.prototype.initialize = function() {
-      return Application.on("update:user", this.updateCurrentUser, this);
+    DashboardView.prototype.display = function() {
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.updateCurrentUser(Application.current_user());
     };
 
     DashboardView.prototype.dispose = function() {
@@ -1074,12 +1121,93 @@
 
   })(Falcon.View);
 
+  SearchView = (function(_super) {
+    __extends(SearchView, _super);
+
+    function SearchView() {
+      _ref23 = SearchView.__super__.constructor.apply(this, arguments);
+      return _ref23;
+    }
+
+    SearchView.prototype.url = '#search-tmpl';
+
+    SearchView.prototype.defaults = {
+      'sc_users': function() {
+        return new SC_Users;
+      },
+      'sc_tracks': function() {
+        return new SC_Tracks;
+      }
+    };
+
+    SearchView.prototype.observables = {
+      'current_user': null,
+      'query': '',
+      'is_loading_users': false,
+      'is_loading_tracks': false
+    };
+
+    SearchView.prototype.display = function() {
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.updateCurrentUser(Application.current_user());
+    };
+
+    SearchView.prototype.dispose = function() {
+      return Application.off("update:user", this.updateCurrentUser);
+    };
+
+    SearchView.prototype.updateCurrentUser = function(user) {
+      if (user === this.current_user()) {
+        return;
+      }
+      this.current_user(user);
+      return this.search();
+    };
+
+    SearchView.prototype.updateQuery = function(query) {
+      if (!_.isString(query)) {
+        query = "";
+      }
+      query = _.trim(query);
+      if (query === this.query()) {
+        return;
+      }
+      this.query(query);
+      return this.search();
+    };
+
+    SearchView.prototype.search = function() {
+      var query,
+        _this = this;
+      if (!Application.is_logged_in()) {
+        return;
+      }
+      query = this.query();
+      if (_.isEmpty(query)) {
+        this.sc_users.reset();
+        return this.sc_tracks.reset();
+      } else {
+        this.is_loading_users(true);
+        this.sc_users.search(query, function() {
+          return _this.is_loading_users(false);
+        });
+        this.is_loading_tracks(true);
+        return this.sc_tracks.search(query, function() {
+          return _this.is_loading_tracks(false);
+        });
+      }
+    };
+
+    return SearchView;
+
+  })(Falcon.View);
+
   SettingsView = (function(_super) {
     __extends(SettingsView, _super);
 
     function SettingsView() {
-      _ref23 = SettingsView.__super__.constructor.apply(this, arguments);
-      return _ref23;
+      _ref24 = SettingsView.__super__.constructor.apply(this, arguments);
+      return _ref24;
     }
 
     SettingsView.prototype.url = "#settings-tmpl";
@@ -1111,18 +1239,18 @@
       },
       'credit_card_expiration': {
         read: function() {
-          var month, year, _ref24, _ref25;
-          year = _.trim((_ref24 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref24 : "");
-          month = _.trim((_ref25 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref25 : "");
+          var month, year, _ref25, _ref26;
+          year = _.trim((_ref25 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref25 : "");
+          month = _.trim((_ref26 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref26 : "");
           if (_.isEmpty(year) || _.isEmpty(month)) {
             return '';
           }
           return "" + month + "/" + year;
         },
         write: function(value) {
-          var month, year, _ref24;
+          var month, year, _ref25;
           value = _.trim(value != null ? value : "");
-          _ref24 = value.split("/"), month = _ref24[0], year = _ref24[1];
+          _ref25 = value.split("/"), month = _ref25[0], year = _ref25[1];
           month = _.trim(month != null ? month : "");
           year = _.trim(year != null ? year : "");
           if (year.length === 2) {
@@ -1191,8 +1319,12 @@
         routing_number = _this.bank_account_routing_number();
         return _this.bank_account_routing_number.is_valid(balanced.bankAccount.validateRoutingNumber(routing_number));
       });
-      Application.on("update:user", this.updateCurrentUser, this);
       return this.showPersonalInformation();
+    };
+
+    SettingsView.prototype.display = function() {
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.updateCurrentUser(Application.current_user());
     };
 
     SettingsView.prototype.dispose = function() {
@@ -1539,8 +1671,8 @@
     __extends(SplashView, _super);
 
     function SplashView() {
-      _ref24 = SplashView.__super__.constructor.apply(this, arguments);
-      return _ref24;
+      _ref25 = SplashView.__super__.constructor.apply(this, arguments);
+      return _ref25;
     }
 
     SplashView.prototype.url = '#splash-tmpl';
@@ -1633,8 +1765,8 @@
     __extends(StreamView, _super);
 
     function StreamView() {
-      _ref25 = StreamView.__super__.constructor.apply(this, arguments);
-      return _ref25;
+      _ref26 = StreamView.__super__.constructor.apply(this, arguments);
+      return _ref26;
     }
 
     StreamView.prototype.url = "#stream-tmpl";
@@ -1650,8 +1782,9 @@
       "current_user": null
     };
 
-    StreamView.prototype.initialize = function() {
-      return Application.on("update:user", this.updateCurrentUser, this);
+    StreamView.prototype.display = function() {
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.updateCurrentUser(Application.current_user());
     };
 
     StreamView.prototype.dispose = function() {
@@ -1695,7 +1828,10 @@
 
   Finch.route("/", {
     setup: function() {
-      return Application.checkSession();
+      Application.checkSession();
+      return Finch.observe("query", function(query) {
+        return Application.search(query);
+      });
     },
     load: function() {
       return Application.setContentView(new DashboardView);
@@ -1724,6 +1860,16 @@
     }
   });
 
+  Finch.route("[/]search", {
+    setup: function() {
+      var _this = this;
+      this.view = Application.setContentView(new SearchView);
+      return Finch.observe("query", function(query) {
+        return _this.view.updateQuery(query);
+      });
+    }
+  });
+
   this.Router = Router = {
     'gotoDashboard': function() {
       return Finch.navigate("/");
@@ -1733,6 +1879,9 @@
     },
     'gotoSettings': function() {
       return Finch.navigate("/settings");
+    },
+    'gotoSearch': function(params) {
+      return Finch.navigate("/search", params, true);
     }
   };
 

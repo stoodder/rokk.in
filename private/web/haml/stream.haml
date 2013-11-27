@@ -6,7 +6,7 @@
 			%ul.grid-list(data-bind="foreach: sc_user.activities")
 				%li.grid-list-item.track(data-bind="with: track")<>
 					.track-image
-						%img(data-bind="src: Helpers.resize_image(artwork_url,'t300x300')")
+						%img(data-bind="src: Helpers.resizeImage(artwork_url,'t300x300')")
 						-ko("if: streamable") do
 							.track-play-icon(data-bind="click: play")<>
 								-ko("ifnot: is_playing") do

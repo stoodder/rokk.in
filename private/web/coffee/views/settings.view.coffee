@@ -114,10 +114,13 @@ class SettingsView extends Falcon.View
 			@bank_account_routing_number.is_valid( balanced.bankAccount.validateRoutingNumber(routing_number) )
 		#END computed
 
-		Application.on("update:user", @updateCurrentUser, @)
-
 		@showPersonalInformation()
 	#NED initialize
+
+	display: ->
+		Application.on("update:user", @updateCurrentUser, @)
+		@updateCurrentUser( Application.current_user() )
+	#END display
 
 	dispose: ->
 		Application.off("update:user", @updateCurrentUser)

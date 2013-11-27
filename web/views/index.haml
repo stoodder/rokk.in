@@ -39,13 +39,13 @@
 				.logo
 					rokk
 					.highlight<> .in
-				%form.search-form<>
-					%input(type="text" placeholder="Search...")
+				%form.search-form(data-bind="submit: $view.searchSubmit")<>
+					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")
 					%i.ion-search
 
 				.pull-right
 					.mini-profile(data-bind="with: $view.current_user")
-						%img(data-bind="src: Helpers.resize_image(avatar_url, 'small')")
+						%img(data-bind="src: Helpers.resizeImage(avatar_url, 'small')")
 						-ko("text: full_name")
 
 					.logout(title="Logout" data-bind="click: $view.logout")
@@ -76,6 +76,34 @@
 		%li Top Funders
 		%li Top Funded
 		%li Your Top Donations
+%template#search-tmpl
+	.content-row
+		.content-column.one-fourth<>
+			.content-title Artists
+			-ko("if: $view.is_loading_users") do
+				.loader
+			-ko("ifnot: $view.is_loading_users") do
+				%ul.artist-list(data-bind="foreach: $view.sc_users")
+					%li.artist-list-item
+						.artist-avatar
+							%img(data-bind="src: Helpers.resizeImage(avatar_url, 'badge')")
+						.artist-name
+							-ko("text: full_name")
+							%small(data-bind="text: username")
+						.artist-stats
+							%i.ion-ios7-people
+							-ko("text: followers_count")
+
+							%i.ion-radio-waves
+							-ko("text: track_count")
+		.content-column.three-fourth<>
+			.content-title Tracks
+			-ko("if: $view.is_loading_tracks") do
+				.loader
+			-ko("ifnot: $view.is_loading_tracks") do
+				%ul(data-bind="foreach: $view.sc_tracks")
+					%li(data-bind="text: title")
+	
 %template#settings-tmpl
 	.content-header
 		%ul.pill-list
@@ -201,7 +229,7 @@
 			%ul.grid-list(data-bind="foreach: sc_user.activities")
 				%li.grid-list-item.track(data-bind="with: track")<>
 					.track-image
-						%img(data-bind="src: Helpers.resize_image(artwork_url,'t300x300')")
+						%img(data-bind="src: Helpers.resizeImage(artwork_url,'t300x300')")
 						-ko("if: streamable") do
 							.track-play-icon(data-bind="click: play")<>
 								-ko("ifnot: is_playing") do

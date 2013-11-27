@@ -10,9 +10,10 @@ class StreamView extends Falcon.View
 		"current_user": null
 	#END observables
 
-	initialize: ->
+	display: ->
 		Application.on("update:user", @updateCurrentUser, @)
-	#END initialize
+		@updateCurrentUser( Application.current_user() )
+	#END display
 
 	dispose: ->
 		Application.off("update:user", @updateCurrentUser)

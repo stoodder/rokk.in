@@ -12,14 +12,59 @@
 #content
 	position: absolute
 	z-index: 1
-	top: 75px
+	top: 0px
 	left: 250px
 	right: 25px
-	padding: 5px 0px 25px 0px
-	color: $white
+	padding: 75px 0px 25px 0px
+	color: $white-darkest
 
 	.content-header
 		+box-shadow( 0px, 1px, 0px, mix( $black-lighter, $black-lightest ) )
 		border-bottom: 1px solid mix( $black, $black-lighter, 25% )
-		padding: 5px 0px 15px 0px
+		padding: 10px 0px 15px 0px
 		margin-bottom: 20px
+
+	.content-title
+		font-size: 10px
+		text-transform: uppercase
+		font-weight: 500
+		text-shadow: 0px 1px 0px mix( $black, $black-lighter, 25% )
+		height: 25px
+		line-height: 25px
+		color: mix( $grey-darker, $grey )
+
+	.content-row
+		margin: 0px -25px
+
+		.content-column:last-child
+			+box-shadow( 0px, 0px, 0px, $black )
+			border-right-width: 0px
+			padding-right: 0px
+
+		.content-column:first-child
+			padding-left: 0px
+
+		.content-column.one-fourth
+			width: 25%
+
+		.content-column.one-third
+			width: 33.333%
+
+		.content-column.half
+			width: 50%
+
+		.content-column.two-third
+			width: 66.667%
+
+		.content-column.three-fourth
+			width: 75%
+
+		.content-column
+			+box-shadow( 1px, 0px, 0px, mix( $black-lighter, $black-lightest ) )
+			float: left
+			border-right: 1px solid mix( $black, $black-lighter, 25% )
+			padding-bottom: 25px
+			margin-bottom: -25px
+
+			.content-title
+				padding: 0px 10px

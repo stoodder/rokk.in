@@ -5,8 +5,9 @@ class DashboardView extends Falcon.View
 		"current_user": null
 	#END observables
 
-	initialize: ->
+	display: ->
 		Application.on("update:user", @updateCurrentUser, @)
+		@updateCurrentUser( Application.current_user() )
 	#END initialize
 
 	dispose: ->

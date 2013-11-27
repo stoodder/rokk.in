@@ -55,10 +55,10 @@
 		* original:     (originally uploaded image)
     ###
 	#----------------------------------
-	'resize_image': (avatar_url, size) ->
+	resizeImage: (avatar_url, size) ->
 		avatar_url = ko.unwrap( avatar_url ) ? ""
 		avatar_url.replace("-large.", "-#{size}.")
-	#END resize_image
+	#END resizeImage
 
 	formatCreditCardNumber: (cc_number) ->
 		cc_number = ko.unwrap( cc_number )
