@@ -43,4 +43,11 @@ class SC_User extends SoundCloudModel
 		"groups": -> new SC_Groups( @ )
 		"web-profiles": -> new SC_WebProfiles( @ )
 	#END defaults
+
+	fetchByUsername: (options) ->
+		options = {complete: options} if _.isFunction( options )
+		options = {} unless _.isObject( options )
+		options.url = @makeUrl("GET", @parent, @get("username"))
+		return @fetch( options )
+	#END fetchByUsername
 #END SC_User

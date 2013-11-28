@@ -1,5 +1,5 @@
 (function() {
-  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, SearchView, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref26, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, ProfileView, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, SearchView, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref26, _ref27, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -201,6 +201,13 @@
         return "/images/cards/diners.png";
       }
       return "/images/cards/credit.png";
+    },
+    formatNumber: function(number, format) {
+      number = ko.unwrap(number);
+      if (format == null) {
+        format = '0,0';
+      }
+      return numeral(number).format(format);
     }
   };
 
@@ -234,11 +241,11 @@
       return _ref1;
     }
 
-    SoundCloudModel.prototype.makeUrl = function(type, parent) {
+    SoundCloudModel.prototype.makeUrl = function(type, parent, id) {
       var original_base_api_url, url;
       original_base_api_url = Falcon.baseApiUrl;
       Falcon.baseApiUrl = "";
-      url = SoundCloudModel.__super__.makeUrl.call(this, type, parent);
+      url = SoundCloudModel.__super__.makeUrl.call(this, type, parent, id);
       Falcon.baseApiUrl = original_base_api_url;
       return url;
     };
@@ -639,6 +646,19 @@
       "web-profiles": function() {
         return new SC_WebProfiles(this);
       }
+    };
+
+    SC_User.prototype.fetchByUsername = function(options) {
+      if (_.isFunction(options)) {
+        options = {
+          complete: options
+        };
+      }
+      if (!_.isObject(options)) {
+        options = {};
+      }
+      options.url = this.makeUrl("GET", this.parent, this.get("username"));
+      return this.fetch(options);
     };
 
     return SC_User;
@@ -1075,6 +1095,14 @@
       }
     };
 
+    ApplicationView.prototype.showModal = function() {
+      return this.is_showing_modal(true);
+    };
+
+    ApplicationView.prototype.hideModal = function() {
+      return this.is_showing_modal(false);
+    };
+
     return ApplicationView;
 
   })(Falcon.View);
@@ -1121,12 +1149,95 @@
 
   })(Falcon.View);
 
+  ProfileView = (function(_super) {
+    __extends(ProfileView, _super);
+
+    function ProfileView() {
+      _ref23 = ProfileView.__super__.constructor.apply(this, arguments);
+      return _ref23;
+    }
+
+    ProfileView.prototype.url = '#profile-tmpl';
+
+    ProfileView.prototype.defaults = {
+      "user": function(sc_id) {
+        var user;
+        user = new User;
+        user.sc_user.set("id", sc_id);
+        return user;
+      }
+    };
+
+    ProfileView.prototype.observables = {
+      "current_user": null,
+      "viewing_user": function() {
+        if (this.user.sc_user.isNew()) {
+          return this.current_user();
+        } else {
+          return this.user;
+        }
+      },
+      "is_loading": false,
+      "has_error": false
+    };
+
+    ProfileView.prototype.display = function() {
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.updateCurrentUser(Application.current_user());
+    };
+
+    ProfileView.prototype.dispose = function() {
+      return Application.off("update:user", this.updateCurrentUser);
+    };
+
+    ProfileView.prototype.updateCurrentUser = function(user) {
+      if (user === this.current_user()) {
+        return;
+      }
+      this.current_user(user);
+      return this.fetchInformation();
+    };
+
+    ProfileView.prototype.fetchInformation = function() {
+      var current_user,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return;
+      }
+      if (this.is_loading()) {
+        return;
+      }
+      if (current_user.equals(this.viewing_user)) {
+        return;
+      }
+      this.is_loading(true);
+      return this.user.sc_user.fetch({
+        complete: function() {
+          return _this.is_loading(false);
+        },
+        success: function() {
+          return _this.has_error(false);
+        },
+        error: function() {
+          return _this.has_error(true);
+        }
+      });
+    };
+
+    ProfileView.prototype.donate = function() {
+      return Application.showModal();
+    };
+
+    return ProfileView;
+
+  })(Falcon.View);
+
   SearchView = (function(_super) {
     __extends(SearchView, _super);
 
     function SearchView() {
-      _ref23 = SearchView.__super__.constructor.apply(this, arguments);
-      return _ref23;
+      _ref24 = SearchView.__super__.constructor.apply(this, arguments);
+      return _ref24;
     }
 
     SearchView.prototype.url = '#search-tmpl';
@@ -1206,8 +1317,8 @@
     __extends(SettingsView, _super);
 
     function SettingsView() {
-      _ref24 = SettingsView.__super__.constructor.apply(this, arguments);
-      return _ref24;
+      _ref25 = SettingsView.__super__.constructor.apply(this, arguments);
+      return _ref25;
     }
 
     SettingsView.prototype.url = "#settings-tmpl";
@@ -1239,18 +1350,18 @@
       },
       'credit_card_expiration': {
         read: function() {
-          var month, year, _ref25, _ref26;
-          year = _.trim((_ref25 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref25 : "");
-          month = _.trim((_ref26 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref26 : "");
+          var month, year, _ref26, _ref27;
+          year = _.trim((_ref26 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref26 : "");
+          month = _.trim((_ref27 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref27 : "");
           if (_.isEmpty(year) || _.isEmpty(month)) {
             return '';
           }
           return "" + month + "/" + year;
         },
         write: function(value) {
-          var month, year, _ref25;
+          var month, year, _ref26;
           value = _.trim(value != null ? value : "");
-          _ref25 = value.split("/"), month = _ref25[0], year = _ref25[1];
+          _ref26 = value.split("/"), month = _ref26[0], year = _ref26[1];
           month = _.trim(month != null ? month : "");
           year = _.trim(year != null ? year : "");
           if (year.length === 2) {
@@ -1671,8 +1782,8 @@
     __extends(SplashView, _super);
 
     function SplashView() {
-      _ref25 = SplashView.__super__.constructor.apply(this, arguments);
-      return _ref25;
+      _ref26 = SplashView.__super__.constructor.apply(this, arguments);
+      return _ref26;
     }
 
     SplashView.prototype.url = '#splash-tmpl';
@@ -1765,8 +1876,8 @@
     __extends(StreamView, _super);
 
     function StreamView() {
-      _ref26 = StreamView.__super__.constructor.apply(this, arguments);
-      return _ref26;
+      _ref27 = StreamView.__super__.constructor.apply(this, arguments);
+      return _ref27;
     }
 
     StreamView.prototype.url = "#stream-tmpl";
@@ -1870,6 +1981,20 @@
     }
   });
 
+  Finch.route("[/]profile", {
+    setup: function() {
+      return this.view = Application.setContentView(new ProfileView);
+    }
+  });
+
+  Finch.route("[/]profile/:username", {
+    setup: function(_arg) {
+      var username;
+      username = _arg.username;
+      return this.view = Application.setContentView(new ProfileView(username));
+    }
+  });
+
   this.Router = Router = {
     'gotoDashboard': function() {
       return Finch.navigate("/");
@@ -1882,6 +2007,13 @@
     },
     'gotoSearch': function(params) {
       return Finch.navigate("/search", params, true);
+    },
+    'gotoProfile': function(user) {
+      if (user instanceof SC_User) {
+        return Finch.navigate("/profile/" + (user.get('id')));
+      } else {
+        return Finch.navigate("/profile");
+      }
     }
   };
 

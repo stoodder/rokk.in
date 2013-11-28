@@ -15,6 +15,7 @@
 		%script(src="/js/jquery-1.10.2.min.js" type="text/javascript")
 		%script(src="/js/underscore-1.5.2.min.js" type="text/javascript")
 		%script(src="/js/knockout-3.0.0.min.js" type="text/javascript")
+		%script(src="/js/numeral.min.js" type="text/javascript")
 		%script(src="/js/falcon.min.js" type="text/javascript")
 		%script(src="/js/finch.min.js" type="text/javascript")
 
@@ -35,6 +36,9 @@
 		-ko("ifnot: $view.is_logged_in") do
 			-ko("view: $view.splash_view")
 		-ko("if: $view.is_logged_in") do
+			#overlay(data-bind="css: {'visible': $view.is_showing_modal}, click: $view.hideModal")
+				.overlay-modal(data-bind="stopEvent: 'click'")
+					test...
 			#header
 				%form.search-form(data-bind="submit: $view.searchSubmit")<>
 					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")
@@ -59,7 +63,7 @@
 						%i.ion-social-rss
 						Stream
 
-					%li.sidebar-menu-item
+					%li.sidebar-menu-item(data-bind="click: Router.gotoProfile")
 						%i.ion-person
 						Profile
 
@@ -78,6 +82,35 @@
 		%li Top Funders
 		%li Top Funded
 		%li Your Top Donations
+%template#profile-tmpl
+	-ko("if: $view.is_loading") do
+		.loader
+	-ko("ifnot: $view.is_loading") do
+		#profile(data-bind="with: $view.viewing_user")
+			.profile-sidebar(data-bind="with: sc_user")
+				.profile-avatar
+					%img(data-bind="src: Helpers.resizeImage(avatar_url, 't300x300')")
+				.profile-username(data-bind="text: username")
+				.profile-name(data-bind="text: full_name")
+				
+				.profile-donate-button(data-bind="click: $view.donate")
+					.btn.btn-block.btn-primary.btn-large
+						.btn-prepend
+							%i.ion-heart
+						Donate
+
+				%ul.profile-characteristics
+					%li.profile-characteristic
+						%i.ion-ios7-people
+						%span.number(data-bind="text: Helpers.formatNumber(followers_count)")
+						Followers
+
+					%li.profile-characteristic
+						%i.ion-radio-waves
+						%span.number(data-bind="text: Helpers.formatNumber(track_count)")
+						Tracks
+			.profile-content
+				Content Here
 %template#search-tmpl
 	.content-row
 		.content-column.one-fourth<>
@@ -86,18 +119,18 @@
 				.loader
 			-ko("ifnot: $view.is_loading_users") do
 				%ul.artist-list(data-bind="foreach: $view.sc_users")
-					%li.artist-list-item
+					%li.artist-list-item(data-bind="click: Router.gotoProfile")
 						.artist-avatar
 							%img(data-bind="src: Helpers.resizeImage(avatar_url, 'badge')")
 						.artist-name
-							-ko("text: full_name")
+							%strong(data-bind="text: full_name")
 							%small(data-bind="text: username")
 						.artist-stats
 							%i.ion-ios7-people
-							-ko("text: followers_count")
+							-ko("text: Helpers.formatNumber(followers_count)")
 
 							%i.ion-radio-waves
-							-ko("text: track_count")
+							-ko("text: Helpers.formatNumber(track_count)")
 		.content-column.three-fourth<>
 			.content-title Tracks
 			-ko("if: $view.is_loading_tracks") do

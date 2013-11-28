@@ -151,4 +151,12 @@ class ApplicationView extends Falcon.View
 			Router.gotoSearch({query})
 		#END if
 	#END search
+
+	showModal: ->
+		@is_showing_modal( true )
+	#END showModel
+
+	hideModal: ->
+		@is_showing_modal( false )
+	#END hideModal
 #END ApplicationView

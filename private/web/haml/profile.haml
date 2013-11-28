@@ -1,0 +1,29 @@
+%template#profile-tmpl
+	-ko("if: $view.is_loading") do
+		.loader
+	-ko("ifnot: $view.is_loading") do
+		#profile(data-bind="with: $view.viewing_user")
+			.profile-sidebar(data-bind="with: sc_user")
+				.profile-avatar
+					%img(data-bind="src: Helpers.resizeImage(avatar_url, 't300x300')")
+				.profile-username(data-bind="text: username")
+				.profile-name(data-bind="text: full_name")
+				
+				.profile-donate-button(data-bind="click: $view.donate")
+					.btn.btn-block.btn-primary.btn-large
+						.btn-prepend
+							%i.ion-heart
+						Donate
+
+				%ul.profile-characteristics
+					%li.profile-characteristic
+						%i.ion-ios7-people
+						%span.number(data-bind="text: Helpers.formatNumber(followers_count)")
+						Followers
+
+					%li.profile-characteristic
+						%i.ion-radio-waves
+						%span.number(data-bind="text: Helpers.formatNumber(track_count)")
+						Tracks
+			.profile-content
+				Content Here

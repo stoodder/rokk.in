@@ -81,4 +81,10 @@
 		return "/images/cards/diners.png" if card_type is "diners club"
 		return "/images/cards/credit.png"
 	#END creditCardImageUrl
+
+	formatNumber: (number, format) ->
+		number = ko.unwrap( number )
+		format ?= '0,0'
+		numeral( number ).format( format )
+	#END formatNumber
 #END Helpers

@@ -6,7 +6,7 @@
 	background-color: $grey-lightest
 	font-size: 10px
 	text-transform: uppercase
-	padding: 10px 12px
+	padding: 9px 12px 10px 12px
 	font-weight: 600
 	cursor: pointer
 	color: $grey-darkest
@@ -14,6 +14,14 @@
 	border: 1px solid $shadow
 	outline: none
 	vertical-align: middle
+
+	.btn-prepend
+		float: left
+		margin: -9px -11px -10px -12px
+		padding: 9px 0px 10px 0px
+		width: 20px
+		text-align: center
+		color: $grey-lighter
 
 	i
 		margin-right: 4px
@@ -29,12 +37,30 @@
 	+opacity(.5)
 	cursor: default
 
+.btn.btn-block
+	width: 100%
+	text-align: center
+
 .btn.btn-small
 	font-size: 9px
-	padding: 8px 10px
+	padding: 8px 10px 8px 10px
 
 	i
 		margin-right: 3px
+
+.btn.btn-large
+	font-size: 12px
+	padding: 13px 15px 9px 15px
+	line-height: 16px
+
+	.btn-prepend
+		width: 45px
+		margin: -13px -20px -9px -15px
+		padding: 11px 0px 7px 5px
+		font-size: 20px
+
+	i
+		margin-right: 5px
 
 .btn.btn-link
 	background-color: transparent
@@ -50,10 +76,10 @@
 .btn.btn-success,
 .btn.btn-success[disabled],
 .btn.btn-success[disabled]:hover
-	color: $green
+	color: $green-darker
 
 .btn.btn-success:hover
-	color: $green-lighter
+	color: $green
 
 .btn.btn-danger
 .btn.btn-danger[disabled],

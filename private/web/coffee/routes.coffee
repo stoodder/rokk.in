@@ -35,9 +35,28 @@ Finch.route "[/]search",
 	#END setup
 #END search
 
+Finch.route "[/]profile",
+	setup: ->
+		@view = Application.setContentView( new ProfileView )
+	#END setup
+#END profile
+
+Finch.route "[/]profile/:username",
+	setup: ({username}) ->
+		@view = Application.setContentView( new ProfileView(username) )
+	#END setup
+#END profile
+
 @Router = Router =
 	'gotoDashboard': -> Finch.navigate("/")
 	'gotoStream': -> Finch.navigate("/stream")
 	'gotoSettings': -> Finch.navigate("/settings")
 	'gotoSearch': (params) -> Finch.navigate("/search", params, true)
+	'gotoProfile': (user) ->
+		if user instanceof SC_User
+			Finch.navigate("/profile/#{user.get('id')}")
+		else
+			Finch.navigate("/profile")
+		#END if
+	#END gotoProfile
 #END Router

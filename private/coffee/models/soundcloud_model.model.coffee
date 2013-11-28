@@ -1,8 +1,8 @@
 class SoundCloudModel extends Falcon.Model
-	makeUrl: (type, parent) ->
+	makeUrl: (type, parent, id) ->
 		original_base_api_url = Falcon.baseApiUrl
 		Falcon.baseApiUrl = ""
-		url = super(type, parent)
+		url = super(type, parent, id)
 		Falcon.baseApiUrl = original_base_api_url
 		return url
 	#END makeUrl

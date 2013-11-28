@@ -6,18 +6,18 @@
 				.loader
 			-ko("ifnot: $view.is_loading_users") do
 				%ul.artist-list(data-bind="foreach: $view.sc_users")
-					%li.artist-list-item
+					%li.artist-list-item(data-bind="click: Router.gotoProfile")
 						.artist-avatar
 							%img(data-bind="src: Helpers.resizeImage(avatar_url, 'badge')")
 						.artist-name
-							-ko("text: full_name")
+							%strong(data-bind="text: full_name")
 							%small(data-bind="text: username")
 						.artist-stats
 							%i.ion-ios7-people
-							-ko("text: followers_count")
+							-ko("text: Helpers.formatNumber(followers_count)")
 
 							%i.ion-radio-waves
-							-ko("text: track_count")
+							-ko("text: Helpers.formatNumber(track_count)")
 		.content-column.three-fourth<>
 			.content-title Tracks
 			-ko("if: $view.is_loading_tracks") do

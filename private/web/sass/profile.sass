@@ -1,0 +1,87 @@
+#profile
+	position: relative
+	margin: -5px 0px 0px -25px
+	width: 100%
+
+	.profile-sidebar
+		+box-shadow(1px, 0px, 1px, $highlight )
+		position: absolute
+		top: 0px
+		left: 0px
+		text-shadow: 0px 1px 0px $highlight
+		width: 241px
+		border-right: 1px solid $shadow
+		padding: 10px 10px 25px 10px
+
+		.profile-avatar
+			+box-shadow(0px, 1px, 0px, $highlight )
+			padding: 0px 10px 10px 10px
+			border-bottom: 1px solid $shadow
+			margin-bottom: 10px
+			width: 220px
+
+			img
+				+border-radius( 3px )
+				height: 200px
+				width: 200px
+
+		.profile-username,
+		.profile-name
+			white-space: nowrap
+			overflow: hidden
+			padding: 0px 10px
+			text-overflow: ellipsis
+			width: 100%
+
+		.profile-username
+			letter-spacing: .01em
+			color: $orange
+			font-size: 24px
+			font-weight: 400
+			height: 30px
+			line-height: 30px
+		
+		.profile-name
+			letter-spacing: .07em
+			color: mix( $grey, $grey-darker )
+			font-size: 13px
+			font-weight: 300
+			height: 20px
+			line-height: 20px
+
+		.profile-donate-button
+			padding: 10px 0px 20px 0px
+
+		ul.profile-characteristics
+			padding: 0px 15px
+
+			li.profile-characteristic
+				font-weight: 300
+				color: $grey-darker
+				height: 25px
+				line-height: 25px
+				font-size: 9px
+				overflow: hidden
+				text-transform: uppercase
+
+				.number, i
+					display: inline-block
+					height: 25px
+					line-height: 25px
+					vertical-align: top
+					margin-right: 5px
+
+				.number
+					color: mix( $grey-darkest, $grey-darker )
+					font-size: 13px
+
+				i
+					color: mix( $grey-lighter, $grey )
+					font-size: 19px
+
+	.profile-content
+		position: absolute
+		top: 0px
+		left: 240px
+		right: 0px
+		padding: 10px 20px 25px 20px

@@ -5,6 +5,9 @@
 		-ko("ifnot: $view.is_logged_in") do
 			-ko("view: $view.splash_view")
 		-ko("if: $view.is_logged_in") do
+			#overlay(data-bind="css: {'visible': $view.is_showing_modal}, click: $view.hideModal")
+				.overlay-modal(data-bind="stopEvent: 'click'")
+					test...
 			#header
 				%form.search-form(data-bind="submit: $view.searchSubmit")<>
 					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")
@@ -29,7 +32,7 @@
 						%i.ion-social-rss
 						Stream
 
-					%li.sidebar-menu-item
+					%li.sidebar-menu-item(data-bind="click: Router.gotoProfile")
 						%i.ion-person
 						Profile
 
