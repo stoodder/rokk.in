@@ -7,7 +7,9 @@
 		-ko("if: $view.is_logged_in") do
 			#overlay(data-bind="css: {'visible': $view.is_showing_modal}, click: $view.hideModal")
 				.overlay-modal(data-bind="stopEvent: 'click'")
-					test...
+					.overlay-modal-close(data-bind="click: $view.hideModal")
+						%i.ion-close
+					-ko("view: $view.modal_view")
 			#header
 				%form.search-form(data-bind="submit: $view.searchSubmit")<>
 					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")

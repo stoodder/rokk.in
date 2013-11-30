@@ -51,7 +51,7 @@ Finch.route "[/]profile/:username",
 	'gotoDashboard': -> Finch.navigate("/")
 	'gotoStream': -> Finch.navigate("/stream")
 	'gotoSettings': -> Finch.navigate("/settings")
-	'gotoSearch': (params) -> Finch.navigate("/search", params, true)
+	'gotoSearch': (params) -> Finch.navigate("/search", params)
 	'gotoProfile': (user) ->
 		if user instanceof SC_User
 			Finch.navigate("/profile/#{user.get('id')}")

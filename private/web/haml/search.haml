@@ -10,8 +10,8 @@
 						.artist-avatar
 							%img(data-bind="src: Helpers.resizeImage(avatar_url, 'badge')")
 						.artist-name
-							%strong(data-bind="text: full_name")
-							%small(data-bind="text: username")
+							%strong(data-bind="text: username")
+							%small(data-bind="text: full_name")
 						.artist-stats
 							%i.ion-ios7-people
 							-ko("text: Helpers.formatNumber(followers_count)")

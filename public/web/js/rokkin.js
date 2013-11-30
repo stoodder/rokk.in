@@ -1,5 +1,5 @@
 (function() {
-  var Application, ApplicationView, DESCENDING_ID_COMPARATOR, DashboardView, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, ProfileView, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, SearchView, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref26, _ref27, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
+  var Application, ApplicationView, CreditCardWidget, DESCENDING_ID_COMPARATOR, DashboardView, Donation, EMAIL_REGEX, Helpers, IE_VERSION, IS_IE, IS_MOBILE, IS_PHONE, IS_SAFARI, IS_TABLET, MENTION_REGEX, NewDonationView, ProfileView, Router, SC_Activities, SC_Activity, SC_Application, SC_Applications, SC_Comment, SC_Comments, SC_Group, SC_Groups, SC_Playlist, SC_Playlists, SC_Track, SC_Tracks, SC_User, SC_Users, SC_WebProfile, SC_WebProfiles, SearchView, Session, SettingsView, SoundCloudCollection, SoundCloudModel, SplashView, StreamView, TAG_REGEX, URL_REGEX, User, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref19, _ref2, _ref20, _ref21, _ref22, _ref23, _ref24, _ref25, _ref26, _ref27, _ref28, _ref29, _ref3, _ref30, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -318,12 +318,46 @@
 
   })(Falcon.Model);
 
+  Donation = (function(_super) {
+    __extends(Donation, _super);
+
+    function Donation() {
+      _ref2 = Donation.__super__.constructor.apply(this, arguments);
+      return _ref2;
+    }
+
+    Donation.prototype.url = 'donation';
+
+    Donation.prototype.defaults = {
+      "amount": 0,
+      "frequency": "once",
+      "soundcloud_user_id": "",
+      "balanced_card_uri": null
+    };
+
+    Donation.prototype.validate = function() {
+      var amount, frequency;
+      amount = this.get('amount');
+      if (!(_.isNumber(amount) && amount > 0)) {
+        return false;
+      }
+      frequency = this.get('frequency');
+      if (frequency !== "once" && frequency !== "weekly") {
+        return false;
+      }
+      return true;
+    };
+
+    return Donation;
+
+  })(Falcon.Model);
+
   Session = (function(_super) {
     __extends(Session, _super);
 
     function Session() {
-      _ref2 = Session.__super__.constructor.apply(this, arguments);
-      return _ref2;
+      _ref3 = Session.__super__.constructor.apply(this, arguments);
+      return _ref3;
     }
 
     Session.prototype.url = 'session';
@@ -355,8 +389,8 @@
     __extends(SC_Activity, _super);
 
     function SC_Activity() {
-      _ref3 = SC_Activity.__super__.constructor.apply(this, arguments);
-      return _ref3;
+      _ref4 = SC_Activity.__super__.constructor.apply(this, arguments);
+      return _ref4;
     }
 
     SC_Activity.prototype.url = "activities";
@@ -402,8 +436,8 @@
     __extends(SC_Application, _super);
 
     function SC_Application() {
-      _ref4 = SC_Application.__super__.constructor.apply(this, arguments);
-      return _ref4;
+      _ref5 = SC_Application.__super__.constructor.apply(this, arguments);
+      return _ref5;
     }
 
     SC_Application.prototype.url = "apps";
@@ -416,8 +450,8 @@
     __extends(SC_Comment, _super);
 
     function SC_Comment() {
-      _ref5 = SC_Comment.__super__.constructor.apply(this, arguments);
-      return _ref5;
+      _ref6 = SC_Comment.__super__.constructor.apply(this, arguments);
+      return _ref6;
     }
 
     SC_Comment.prototype.url = "comments";
@@ -430,8 +464,8 @@
     __extends(SC_Group, _super);
 
     function SC_Group() {
-      _ref6 = SC_Group.__super__.constructor.apply(this, arguments);
-      return _ref6;
+      _ref7 = SC_Group.__super__.constructor.apply(this, arguments);
+      return _ref7;
     }
 
     SC_Group.prototype.url = "groups";
@@ -444,8 +478,8 @@
     __extends(SC_Playlist, _super);
 
     function SC_Playlist() {
-      _ref7 = SC_Playlist.__super__.constructor.apply(this, arguments);
-      return _ref7;
+      _ref8 = SC_Playlist.__super__.constructor.apply(this, arguments);
+      return _ref8;
     }
 
     SC_Playlist.prototype.url = "playlists";
@@ -460,8 +494,8 @@
     __extends(SC_Track, _super);
 
     function SC_Track() {
-      _ref8 = SC_Track.__super__.constructor.apply(this, arguments);
-      return _ref8;
+      _ref9 = SC_Track.__super__.constructor.apply(this, arguments);
+      return _ref9;
     }
 
     SC_Track.prototype.url = "tracks";
@@ -592,8 +626,8 @@
     __extends(SC_User, _super);
 
     function SC_User() {
-      _ref9 = SC_User.__super__.constructor.apply(this, arguments);
-      return _ref9;
+      _ref10 = SC_User.__super__.constructor.apply(this, arguments);
+      return _ref10;
     }
 
     SC_User.prototype.url = "users";
@@ -669,8 +703,8 @@
     __extends(SC_WebProfile, _super);
 
     function SC_WebProfile() {
-      _ref10 = SC_WebProfile.__super__.constructor.apply(this, arguments);
-      return _ref10;
+      _ref11 = SC_WebProfile.__super__.constructor.apply(this, arguments);
+      return _ref11;
     }
 
     SC_WebProfile.prototype.url = "web-profiles";
@@ -683,8 +717,8 @@
     __extends(User, _super);
 
     function User() {
-      _ref11 = User.__super__.constructor.apply(this, arguments);
-      return _ref11;
+      _ref12 = User.__super__.constructor.apply(this, arguments);
+      return _ref12;
     }
 
     User.prototype.url = "user";
@@ -718,9 +752,11 @@
     __extends(SoundCloudCollection, _super);
 
     function SoundCloudCollection() {
-      _ref12 = SoundCloudCollection.__super__.constructor.apply(this, arguments);
-      return _ref12;
+      _ref13 = SoundCloudCollection.__super__.constructor.apply(this, arguments);
+      return _ref13;
     }
+
+    SoundCloudCollection.prototype['limit'] = 50;
 
     SoundCloudCollection.prototype.makeUrl = function(type, parent) {
       var original_base_api_url, url;
@@ -744,6 +780,9 @@
       if (!_.isObject(params)) {
         params = {};
       }
+      if (params.limit == null) {
+        params.limit = this.limit;
+      }
       if (_.isFunction(options)) {
         options = {
           success: options
@@ -764,8 +803,8 @@
     __extends(SC_Activities, _super);
 
     function SC_Activities() {
-      _ref13 = SC_Activities.__super__.constructor.apply(this, arguments);
-      return _ref13;
+      _ref14 = SC_Activities.__super__.constructor.apply(this, arguments);
+      return _ref14;
     }
 
     SC_Activities.prototype.model = SC_Activity;
@@ -773,11 +812,11 @@
     SC_Activities.prototype.parse = function(data) {
       var item;
       return (function() {
-        var _i, _len, _ref14, _ref15, _results;
-        _ref15 = (_ref14 = data.collection) != null ? _ref14 : [];
+        var _i, _len, _ref15, _ref16, _results;
+        _ref16 = (_ref15 = data.collection) != null ? _ref15 : [];
         _results = [];
-        for (_i = 0, _len = _ref15.length; _i < _len; _i++) {
-          item = _ref15[_i];
+        for (_i = 0, _len = _ref16.length; _i < _len; _i++) {
+          item = _ref16[_i];
           _results.push(SC_Activity.prototype.parse(item));
         }
         return _results;
@@ -802,8 +841,8 @@
     __extends(SC_Applications, _super);
 
     function SC_Applications() {
-      _ref14 = SC_Applications.__super__.constructor.apply(this, arguments);
-      return _ref14;
+      _ref15 = SC_Applications.__super__.constructor.apply(this, arguments);
+      return _ref15;
     }
 
     SC_Applications.prototype.model = SC_Application;
@@ -816,8 +855,8 @@
     __extends(SC_Comments, _super);
 
     function SC_Comments() {
-      _ref15 = SC_Comments.__super__.constructor.apply(this, arguments);
-      return _ref15;
+      _ref16 = SC_Comments.__super__.constructor.apply(this, arguments);
+      return _ref16;
     }
 
     SC_Comments.prototype.model = SC_Comment;
@@ -830,8 +869,8 @@
     __extends(SC_Groups, _super);
 
     function SC_Groups() {
-      _ref16 = SC_Groups.__super__.constructor.apply(this, arguments);
-      return _ref16;
+      _ref17 = SC_Groups.__super__.constructor.apply(this, arguments);
+      return _ref17;
     }
 
     SC_Groups.prototype.model = SC_Group;
@@ -844,8 +883,8 @@
     __extends(SC_Playlists, _super);
 
     function SC_Playlists() {
-      _ref17 = SC_Playlists.__super__.constructor.apply(this, arguments);
-      return _ref17;
+      _ref18 = SC_Playlists.__super__.constructor.apply(this, arguments);
+      return _ref18;
     }
 
     SC_Playlists.prototype.model = SC_Playlist;
@@ -858,8 +897,8 @@
     __extends(SC_Tracks, _super);
 
     function SC_Tracks() {
-      _ref18 = SC_Tracks.__super__.constructor.apply(this, arguments);
-      return _ref18;
+      _ref19 = SC_Tracks.__super__.constructor.apply(this, arguments);
+      return _ref19;
     }
 
     SC_Tracks.prototype.model = SC_Track;
@@ -872,8 +911,8 @@
     __extends(SC_Users, _super);
 
     function SC_Users() {
-      _ref19 = SC_Users.__super__.constructor.apply(this, arguments);
-      return _ref19;
+      _ref20 = SC_Users.__super__.constructor.apply(this, arguments);
+      return _ref20;
     }
 
     SC_Users.prototype.model = SC_User;
@@ -886,8 +925,8 @@
     __extends(SC_WebProfiles, _super);
 
     function SC_WebProfiles() {
-      _ref20 = SC_WebProfiles.__super__.constructor.apply(this, arguments);
-      return _ref20;
+      _ref21 = SC_WebProfiles.__super__.constructor.apply(this, arguments);
+      return _ref21;
     }
 
     SC_WebProfiles.prototype.model = SC_WebProfile;
@@ -902,8 +941,8 @@
     __extends(ApplicationView, _super);
 
     function ApplicationView() {
-      _ref21 = ApplicationView.__super__.constructor.apply(this, arguments);
-      return _ref21;
+      _ref22 = ApplicationView.__super__.constructor.apply(this, arguments);
+      return _ref22;
     }
 
     ApplicationView.prototype.url = '#application-tmpl';
@@ -1095,7 +1134,11 @@
       }
     };
 
-    ApplicationView.prototype.showModal = function() {
+    ApplicationView.prototype.showModal = function(view) {
+      if (!Falcon.isView(view)) {
+        return;
+      }
+      this.modal_view(view);
       return this.is_showing_modal(true);
     };
 
@@ -1107,12 +1150,173 @@
 
   })(Falcon.View);
 
+  CreditCardWidget = (function(_super) {
+    __extends(CreditCardWidget, _super);
+
+    function CreditCardWidget() {
+      _ref23 = CreditCardWidget.__super__.constructor.apply(this, arguments);
+      return _ref23;
+    }
+
+    CreditCardWidget.prototype.url = '#credit_card_widget-tmpl';
+
+    CreditCardWidget.prototype.observables = {
+      'credit_card_type': '',
+      'credit_card_expiration_month': '',
+      'credit_card_expiration_year': '',
+      'credit_card_cvc': '',
+      '_credit_card_number': '',
+      'credit_card_number': {
+        read: function() {
+          return Helpers.formatCreditCardNumber(this._credit_card_number);
+        },
+        write: function(number) {
+          return this._credit_card_number(number);
+        }
+      },
+      'credit_card_expiration': {
+        read: function() {
+          var month, year, _ref24, _ref25;
+          year = _.trim((_ref24 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref24 : "");
+          month = _.trim((_ref25 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref25 : "");
+          if (_.isEmpty(year) || _.isEmpty(month)) {
+            return '';
+          }
+          return "" + month + "/" + year;
+        },
+        write: function(value) {
+          var month, year, _ref24;
+          value = _.trim(value != null ? value : "");
+          _ref24 = value.split("/"), month = _ref24[0], year = _ref24[1];
+          month = _.trim(month != null ? month : "");
+          year = _.trim(year != null ? year : "");
+          if (year.length === 2) {
+            year = "20" + year;
+          }
+          if (month.length === 1) {
+            month = "0" + month;
+          }
+          year = year.slice(0, 4);
+          month = month.slice(0, 2);
+          console.log(month, year);
+          this.credit_card_expiration_month(month);
+          return this.credit_card_expiration_year(year);
+        }
+      }
+    };
+
+    CreditCardWidget.prototype.initialize = function() {
+      var _this = this;
+      this.credit_card_number.classify("validateable");
+      this.credit_card_expiration.classify("validateable");
+      this.credit_card_cvc.classify("validateable");
+      ko.computed(function() {
+        var is_valid, number;
+        number = _this.credit_card_number();
+        is_valid = balanced.card.isCardNumberValid(number);
+        _this.credit_card_number.is_valid(is_valid);
+        return _this.credit_card_type(is_valid ? balanced.card.cardType(number) : "");
+      });
+      ko.computed(function() {
+        var month, year;
+        _this.credit_card_expiration();
+        month = _this.credit_card_expiration_month.peek();
+        year = _this.credit_card_expiration_year.peek();
+        return _this.credit_card_expiration.is_valid(balanced.card.isExpiryValid(month, year));
+      });
+      return ko.computed(function() {
+        var cvc, number;
+        number = _this.credit_card_number();
+        cvc = _this.credit_card_cvc();
+        return _this.credit_card_cvc.is_valid(balanced.card.isSecurityCodeValid(number, cvc));
+      });
+    };
+
+    CreditCardWidget.prototype.resetFields = function() {
+      this.credit_card_number("");
+      this.credit_card_expiration("");
+      return this.credit_card_cvc("");
+    };
+
+    CreditCardWidget.prototype.clearValidations = function() {
+      this.credit_card_number.clearValidations();
+      this.credit_card_expiration.clearValidations();
+      return this.credit_card_cvc.clearValidations();
+    };
+
+    CreditCardWidget.prototype.hasError = function() {
+      return this.credit_card_number.has_error() || this.credit_card_expiration.has_error() || this.credit_card_cvc.has_error();
+    };
+
+    CreditCardWidget.prototype.createCardOnBalanced = function(options) {
+      var credit_card_cvc, credit_card_expiration_month, credit_card_expiration_year, credit_card_number,
+        _this = this;
+      if (_.isFunction(options)) {
+        options = {
+          complete: options
+        };
+      }
+      if (!_.isObject(options)) {
+        options = {};
+      }
+      if (options.success == null) {
+        options.success = (function() {});
+      }
+      if (options.error == null) {
+        options.error = (function() {});
+      }
+      if (options.complete == null) {
+        options.complete = (function() {});
+      }
+      credit_card_number = this.credit_card_number();
+      credit_card_cvc = this.credit_card_cvc();
+      credit_card_expiration_month = this.credit_card_expiration_month();
+      credit_card_expiration_year = this.credit_card_expiration_year();
+      console.log("This: ", credit_card_expiration_month, credit_card_expiration_year);
+      if (!balanced.card.isCardNumberValid(credit_card_number)) {
+        this.credit_card_number.error("Please enter a valid credit card number.");
+      }
+      if (!balanced.card.isExpiryValid(credit_card_expiration_month, credit_card_expiration_year)) {
+        this.credit_card_expiration.error("Please enter a valid expiration date.");
+      }
+      if (!balanced.card.isSecurityCodeValid(credit_card_number, credit_card_cvc)) {
+        this.credit_card_cvc.error("Please enter a valid CVC Number.");
+      }
+      if (this.hasError()) {
+        options.error();
+        options.complete();
+        return;
+      }
+      this.credit_card_number.is_valid(true);
+      this.credit_card_expiration.is_valid(true);
+      this.credit_card_cvc.is_valid(true);
+      return balanced.card.create({
+        'card_number': credit_card_number,
+        'expiration_month': credit_card_expiration_month,
+        'expiration_year': credit_card_expiration_year,
+        'security_code': credit_card_cvc
+      }, function(response) {
+        switch (response.status) {
+          case 201:
+            options.success(response.data.uri);
+            break;
+          default:
+            options.error();
+        }
+        return options.complete();
+      });
+    };
+
+    return CreditCardWidget;
+
+  })(Falcon.View);
+
   DashboardView = (function(_super) {
     __extends(DashboardView, _super);
 
     function DashboardView() {
-      _ref22 = DashboardView.__super__.constructor.apply(this, arguments);
-      return _ref22;
+      _ref24 = DashboardView.__super__.constructor.apply(this, arguments);
+      return _ref24;
     }
 
     DashboardView.prototype.url = "#dashboard-tmpl";
@@ -1149,12 +1353,167 @@
 
   })(Falcon.View);
 
+  NewDonationView = (function(_super) {
+    __extends(NewDonationView, _super);
+
+    function NewDonationView() {
+      _ref25 = NewDonationView.__super__.constructor.apply(this, arguments);
+      return _ref25;
+    }
+
+    NewDonationView.prototype.url = '#new_donation-tmpl';
+
+    NewDonationView.prototype.defaults = {
+      'sc_user': function(sc_user) {
+        return ko.unwrap(sc_user);
+      },
+      'credit_card_widget': function() {
+        return new CreditCardWidget;
+      },
+      'donation': function() {
+        return new Donation;
+      }
+    };
+
+    NewDonationView.prototype.observables = {
+      'alert': null,
+      'current_user': null,
+      'is_loading': false,
+      'is_saving': false,
+      'is_showing_new_credit_card': false,
+      'is_showing_success': false,
+      'donation_amount': null,
+      'donation_frequency': 'once',
+      'donation_message': '',
+      'is_donation_anonymous': false,
+      'is_frequency_once': function() {
+        return this.donation_frequency() === 'once';
+      },
+      'is_frequency_weekly': function() {
+        return this.donation_frequency() === 'weekly';
+      }
+    };
+
+    NewDonationView.prototype.initialize = function() {
+      return this.alert.classify("validateable");
+    };
+
+    NewDonationView.prototype.display = function() {
+      Application.on("update:user", this.updateCurrentUser, this);
+      return this.updateCurrentUser(Application.current_user());
+    };
+
+    NewDonationView.prototype.dispose = function() {
+      return Application.off("update:user", this.updateCurrentUser);
+    };
+
+    NewDonationView.prototype.updateCurrentUser = function(user) {
+      if (user === this.current_user()) {
+        return;
+      }
+      this.current_user(user);
+      return this.is_showing_new_credit_card(_.isEmpty(user.get('balanced_card_uri')));
+    };
+
+    NewDonationView.prototype.setFrequencyToOnce = function() {
+      return this.donation_frequency("once");
+    };
+
+    NewDonationView.prototype.setFrequencyToWeekly = function() {
+      return this.donation_frequency("weekly");
+    };
+
+    NewDonationView.prototype.showNewCreditCard = function() {
+      return this.is_showing_new_credit_card(true);
+    };
+
+    NewDonationView.prototype.setIsAnonymous = function() {
+      return this.is_donation_anonymous(true);
+    };
+
+    NewDonationView.prototype.setIsntAnonymous = function() {
+      return this.is_donation_anonymous(false);
+    };
+
+    NewDonationView.prototype.cancelDonation = function() {
+      if (this.is_saving()) {
+        return false;
+      }
+      this.trigger("cancel");
+      return false;
+    };
+
+    NewDonationView.prototype.createDonation = function() {
+      var amount, current_user, donation, frequency, is_anonymous, message, soundcloud_user_id, _saveCardToUser, _saveDonation,
+        _this = this;
+      if (!((current_user = this.current_user()) instanceof User)) {
+        return false;
+      }
+      if (this.is_saving()) {
+        return false;
+      }
+      amount = parseFloat(this.donation_amount());
+      frequency = this.donation_frequency();
+      message = this.donation_message();
+      is_anonymous = this.is_donation_anonymous();
+      soundcloud_user_id = this.sc_user.get('id');
+      donation = new Donation({
+        amount: amount,
+        frequency: frequency,
+        message: message,
+        is_anonymous: is_anonymous,
+        soundcloud_user_id: soundcloud_user_id
+      });
+      this.is_saving(true);
+      _saveDonation = function() {
+        return donation.create({
+          complete: function() {
+            return _this.is_saving(false);
+          },
+          success: function(donation) {
+            _this.donation.fill(donation.unwrap());
+            return _this.is_showing_success(true);
+          }
+        });
+      };
+      _saveCardToUser = function(balanced_card_uri) {
+        return current_user.clone(["id"]).set({
+          balanced_card_uri: balanced_card_uri
+        }).save({
+          attributes: ["balanced_card_uri"],
+          success: function(user) {
+            current_user.fill(user.unwrap());
+            return _saveDonation();
+          },
+          error: function() {
+            _this.alert.error("Error while saving credit card information");
+            return _this.is_saving(false);
+          }
+        });
+      };
+      if (this.is_showing_new_credit_card()) {
+        this.credit_card_widget.createCardOnBalanced({
+          success: _saveCardToUser,
+          error: function() {
+            return _this.is_saving(false);
+          }
+        });
+      } else {
+        _saveDonation();
+      }
+      return false;
+    };
+
+    return NewDonationView;
+
+  })(Falcon.View);
+
   ProfileView = (function(_super) {
     __extends(ProfileView, _super);
 
     function ProfileView() {
-      _ref23 = ProfileView.__super__.constructor.apply(this, arguments);
-      return _ref23;
+      _ref26 = ProfileView.__super__.constructor.apply(this, arguments);
+      return _ref26;
     }
 
     ProfileView.prototype.url = '#profile-tmpl';
@@ -1225,7 +1584,12 @@
     };
 
     ProfileView.prototype.donate = function() {
-      return Application.showModal();
+      var view;
+      view = new NewDonationView(this.user.sc_user);
+      view.on("cancel", function() {
+        return Application.hideModal();
+      });
+      return Application.showModal(view);
     };
 
     return ProfileView;
@@ -1236,18 +1600,24 @@
     __extends(SearchView, _super);
 
     function SearchView() {
-      _ref24 = SearchView.__super__.constructor.apply(this, arguments);
-      return _ref24;
+      _ref27 = SearchView.__super__.constructor.apply(this, arguments);
+      return _ref27;
     }
 
     SearchView.prototype.url = '#search-tmpl';
 
     SearchView.prototype.defaults = {
       'sc_users': function() {
-        return new SC_Users;
+        var sc_users;
+        sc_users = new SC_Users;
+        sc_users.limit = 11;
+        return sc_users;
       },
       'sc_tracks': function() {
-        return new SC_Tracks;
+        var sc_tracks;
+        sc_tracks = new SC_Tracks;
+        sc_tracks.limit = 25;
+        return sc_tracks;
       }
     };
 
@@ -1317,11 +1687,17 @@
     __extends(SettingsView, _super);
 
     function SettingsView() {
-      _ref25 = SettingsView.__super__.constructor.apply(this, arguments);
-      return _ref25;
+      _ref28 = SettingsView.__super__.constructor.apply(this, arguments);
+      return _ref28;
     }
 
     SettingsView.prototype.url = "#settings-tmpl";
+
+    SettingsView.prototype.defaults = {
+      'credit_card_widget': function() {
+        return new CreditCardWidget;
+      }
+    };
 
     SettingsView.prototype.observables = {
       'alert': '',
@@ -1334,47 +1710,6 @@
       'current_credit_card_type': '',
       'has_credit_card': function() {
         return !_.isEmpty(this.current_credit_card_last_4()) || !_.isEmpty(this.current_credit_card_type());
-      },
-      'credit_card_type': '',
-      'credit_card_expiration_month': '',
-      'credit_card_expiration_year': '',
-      'credit_card_cvc': '',
-      '_credit_card_number': '',
-      'credit_card_number': {
-        read: function() {
-          return Helpers.formatCreditCardNumber(this._credit_card_number);
-        },
-        write: function(number) {
-          return this._credit_card_number(number);
-        }
-      },
-      'credit_card_expiration': {
-        read: function() {
-          var month, year, _ref26, _ref27;
-          year = _.trim((_ref26 = ko.unwrap(this.credit_card_expiration_year)) != null ? _ref26 : "");
-          month = _.trim((_ref27 = ko.unwrap(this.credit_card_expiration_month)) != null ? _ref27 : "");
-          if (_.isEmpty(year) || _.isEmpty(month)) {
-            return '';
-          }
-          return "" + month + "/" + year;
-        },
-        write: function(value) {
-          var month, year, _ref26;
-          value = _.trim(value != null ? value : "");
-          _ref26 = value.split("/"), month = _ref26[0], year = _ref26[1];
-          month = _.trim(month != null ? month : "");
-          year = _.trim(year != null ? year : "");
-          if (year.length === 2) {
-            year = "20" + year;
-          }
-          if (month.length === 1) {
-            month = "0" + month;
-          }
-          year = year.slice(0, 4);
-          month = month.slice(0, 2);
-          this.credit_card_expiration_month(month);
-          return this.credit_card_expiration_year(year);
-        }
       },
       'current_bank_name': "",
       'current_bank_account_number': "",
@@ -1389,32 +1724,9 @@
     SettingsView.prototype.initialize = function() {
       var _this = this;
       this.alert.classify("validateable");
-      this.credit_card_number.classify("validateable");
-      this.credit_card_expiration.classify("validateable");
-      this.credit_card_cvc.classify("validateable");
       this.bank_account_name.classify("validateable");
       this.bank_account_account_number.classify("validateable");
       this.bank_account_routing_number.classify("validateable");
-      ko.computed(function() {
-        var is_valid, number;
-        number = _this.credit_card_number();
-        is_valid = balanced.card.isCardNumberValid(number);
-        _this.credit_card_number.is_valid(is_valid);
-        return _this.credit_card_type(is_valid ? balanced.card.cardType(number) : "");
-      });
-      ko.computed(function() {
-        var month, year;
-        _this.credit_card_expiration();
-        month = _this.credit_card_expiration_month.peek();
-        year = _this.credit_card_expiration_year.peek();
-        return _this.credit_card_expiration.is_valid(balanced.card.isExpiryValid(month, year));
-      });
-      ko.computed(function() {
-        var cvc, number;
-        number = _this.credit_card_number();
-        cvc = _this.credit_card_cvc();
-        return _this.credit_card_cvc.is_valid(balanced.card.isSecurityCodeValid(number, cvc));
-      });
       ko.computed(function() {
         var name;
         name = _this.bank_account_name();
@@ -1474,9 +1786,7 @@
 
     SettingsView.prototype._resetFields = function() {
       this.alert("");
-      this.credit_card_number("");
-      this.credit_card_expiration("");
-      this.credit_card_cvc("");
+      this.credit_card_widget.resetFields();
       this.bank_account_name("");
       this.bank_account_account_number("");
       this.bank_account_routing_number("");
@@ -1485,17 +1795,18 @@
 
     SettingsView.prototype._clearValidations = function() {
       this.alert.clearValidations();
-      this.credit_card_number.clearValidations();
-      this.credit_card_expiration.clearValidations();
-      this.credit_card_cvc.clearValidations();
+      this.credit_card_widget.clearValidations();
       this.bank_account_name.clearValidations();
       this.bank_account_account_number.clearValidations();
       return this.bank_account_routing_number.clearValidations();
     };
 
     SettingsView.prototype._hasError = function() {
+      if (this.alert.has_error()) {
+        return true;
+      }
       if (this.is_showing_credit_card()) {
-        return this.credit_card_number.has_error() || this.credit_card_expiration.has_error() || this.credit_card_cvc.has_error();
+        return this.credit_card_widget.hasError();
       } else if (this.is_showing_bank_account()) {
         return this.bank_account_routing_number.has_error() || this.bank_account_account_number.has_error() || this.bank_account_name.has_error();
       }
@@ -1523,7 +1834,7 @@
     };
 
     SettingsView.prototype.saveCreditCard = function() {
-      var credit_card_cvc, credit_card_expiration, credit_card_expiration_month, credit_card_expiration_year, credit_card_number, current_user, _saveCardToUser,
+      var current_user, _saveCardToUser,
         _this = this;
       if (!((current_user = this.current_user()) instanceof User)) {
         return false;
@@ -1531,27 +1842,6 @@
       if (this.is_saving()) {
         return false;
       }
-      this._clearValidations();
-      credit_card_number = this.credit_card_number();
-      credit_card_expiration = this.credit_card_expiration();
-      credit_card_cvc = this.credit_card_cvc();
-      credit_card_expiration_month = this.credit_card_expiration_month();
-      credit_card_expiration_year = this.credit_card_expiration_year();
-      if (!balanced.card.isCardNumberValid(credit_card_number)) {
-        this.credit_card_number.error("Please enter a valid credit card number.");
-      }
-      if (!balanced.card.isExpiryValid(credit_card_expiration_month, credit_card_expiration_year)) {
-        this.credit_card_expiration.error("Please enter a valid expiration date.");
-      }
-      if (!balanced.card.isSecurityCodeValid(credit_card_number, credit_card_cvc)) {
-        this.credit_card_cvc.error("Please enter a valid CVC Number.");
-      }
-      if (this._hasError()) {
-        return false;
-      }
-      this.credit_card_number.is_valid(true);
-      this.credit_card_expiration.is_valid(true);
-      this.credit_card_cvc.is_valid(true);
       this.is_saving(true);
       _saveCardToUser = function(balanced_card_uri) {
         return current_user.clone(["id"]).set({
@@ -1572,19 +1862,12 @@
           }
         });
       };
-      balanced.card.create({
-        'card_number': credit_card_number,
-        'expiration_month': credit_card_expiration_month,
-        'expiration_year': credit_card_expiration_year,
-        'security_code': credit_card_cvc
-      }, function(response) {
-        switch (response.status) {
-          case 201:
-            return _saveCardToUser(response.data.uri);
-          default:
-            _this.alert.error("An error occurred while saving credit card information");
+      this.credit_card_widget.createCardOnBalanced({
+        success: _saveCardToUser,
+        error: function() {
+          _this.is_saving(false);
+          return _this.alert.error("An error occurred while saving credit card information");
         }
-        return _this.is_saving(false);
       });
       return false;
     };
@@ -1782,8 +2065,8 @@
     __extends(SplashView, _super);
 
     function SplashView() {
-      _ref26 = SplashView.__super__.constructor.apply(this, arguments);
-      return _ref26;
+      _ref29 = SplashView.__super__.constructor.apply(this, arguments);
+      return _ref29;
     }
 
     SplashView.prototype.url = '#splash-tmpl';
@@ -1876,8 +2159,8 @@
     __extends(StreamView, _super);
 
     function StreamView() {
-      _ref27 = StreamView.__super__.constructor.apply(this, arguments);
-      return _ref27;
+      _ref30 = StreamView.__super__.constructor.apply(this, arguments);
+      return _ref30;
     }
 
     StreamView.prototype.url = "#stream-tmpl";
@@ -1935,6 +2218,24 @@
     var value;
     value = ko.unwrap(valueAccessor());
     return element.setAttribute("src", value);
+  });
+
+  Falcon.addBinding('stopEvent', function(element, valueAccessor) {
+    var evt, value, _i, _len, _results;
+    value = ko.unwrap(valueAccessor());
+    if (_.isString(value)) {
+      value = [value];
+    }
+    _results = [];
+    for (_i = 0, _len = value.length; _i < _len; _i++) {
+      evt = value[_i];
+      _results.push($(element).on(evt, function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }));
+    }
+    return _results;
   });
 
   Finch.route("/", {
@@ -2006,7 +2307,7 @@
       return Finch.navigate("/settings");
     },
     'gotoSearch': function(params) {
-      return Finch.navigate("/search", params, true);
+      return Finch.navigate("/search", params);
     },
     'gotoProfile': function(user) {
       if (user instanceof SC_User) {

@@ -1,0 +1,22 @@
+%template#credit_card_widget-tmpl
+	.form-input<>
+		%label.form-input-label.input-label-small Credit Card Number
+		.form-input-control(data-bind="css: {'is_valid': $view.credit_card_number.is_valid, 'has_error': $view.credit_card_number.has_error}")
+			%input.input-large(type="text" placeholder="0123-4567-8910-0000" data-bind="value: $view.credit_card_number, valueUpdate: 'afterkeydown'" maxlength="19")
+			.input-hover(data-bind="text: $view.credit_card_type")
+			.input-help-text.error-only(data-bind="text: $view.credit_card_number.error")
+
+	.form-input.two-third<>
+		%label.form-input-label.input-label-small Expiration
+		.form-input-control(data-bind="css: {'is_valid': $view.credit_card_expiration.is_valid, 'has_error': $view.credit_card_expiration.has_error}")
+			%input.input-large(type="text" placeholder="01/2015" data-bind="value: $view.credit_card_expiration")
+			.input-hover
+			.input-help-text.error-only(data-bind="text: $view.credit_card_expiration.error")
+
+
+	.form-input.third<>
+		%label.form-input-label.input-label-small CVC
+		.form-input-control(data-bind="css: {'is_valid': $view.credit_card_cvc.is_valid, 'has_error': $view.credit_card_cvc.has_error}")
+			%input.input-large(type="text" placeholder="123" data-bind="value: $view.credit_card_cvc, valueUpdate: 'afterkeydown'")
+			.input-hover
+			.input-help-text.error-only(data-bind="text: $view.credit_card_cvc.error")

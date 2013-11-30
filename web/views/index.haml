@@ -38,7 +38,9 @@
 		-ko("if: $view.is_logged_in") do
 			#overlay(data-bind="css: {'visible': $view.is_showing_modal}, click: $view.hideModal")
 				.overlay-modal(data-bind="stopEvent: 'click'")
-					test...
+					.overlay-modal-close(data-bind="click: $view.hideModal")
+						%i.ion-close
+					-ko("view: $view.modal_view")
 			#header
 				%form.search-form(data-bind="submit: $view.searchSubmit")<>
 					%input(type="text" placeholder="Search..." data-bind="value: $view.search_query, valueUpdate: 'afterkeydown'")
@@ -76,12 +78,105 @@
 					Logout
 
 			#content(data-bind="view: $view.content_view")
+%template#credit_card_widget-tmpl
+	.form-input<>
+		%label.form-input-label.input-label-small Credit Card Number
+		.form-input-control(data-bind="css: {'is_valid': $view.credit_card_number.is_valid, 'has_error': $view.credit_card_number.has_error}")
+			%input.input-large(type="text" placeholder="0123-4567-8910-0000" data-bind="value: $view.credit_card_number, valueUpdate: 'afterkeydown'" maxlength="19")
+			.input-hover(data-bind="text: $view.credit_card_type")
+			.input-help-text.error-only(data-bind="text: $view.credit_card_number.error")
+
+	.form-input.two-third<>
+		%label.form-input-label.input-label-small Expiration
+		.form-input-control(data-bind="css: {'is_valid': $view.credit_card_expiration.is_valid, 'has_error': $view.credit_card_expiration.has_error}")
+			%input.input-large(type="text" placeholder="01/2015" data-bind="value: $view.credit_card_expiration")
+			.input-hover
+			.input-help-text.error-only(data-bind="text: $view.credit_card_expiration.error")
+
+
+	.form-input.third<>
+		%label.form-input-label.input-label-small CVC
+		.form-input-control(data-bind="css: {'is_valid': $view.credit_card_cvc.is_valid, 'has_error': $view.credit_card_cvc.has_error}")
+			%input.input-large(type="text" placeholder="123" data-bind="value: $view.credit_card_cvc, valueUpdate: 'afterkeydown'")
+			.input-hover
+			.input-help-text.error-only(data-bind="text: $view.credit_card_cvc.error")
 %template#dashboard-tmpl	
 	%ul
 		%li New Users
 		%li Top Funders
 		%li Top Funded
 		%li Your Top Donations
+%template#new_donation-tmpl
+	.overlay-modal-header
+		%i.ion-heart
+		Donate
+	.overlay-modal-content
+		-ko("if: $view.is_showing_success") do
+			.modal-intro-text
+				Awesome! You've just donated
+				=" "
+				.highlight(data-bind="text: Helpers.formatNumber($view.donation.amount, '$0,0.00')")<>
+				=" to "
+				.highlight(data-bind="text: $view.sc_user.username")<>
+				="."
+		-ko("ifnot: $view.is_showing_success") do
+			.modal-intro-text
+				Great! You're about to donate to
+				=" "
+				.highlight(data-bind="text: $view.sc_user.username")<>
+				="."
+
+			.modal-content-body
+				%form.form-standard(data-bind="submit: $view.createDonation, css: {'is_loading': $view.is_saving}")
+					.form-input.input-inline
+						%label.form-input-label.input-label-large I'd like to donate
+						.form-input-control(data-prepend="$")
+							%input.input-large(type="text" placeholder="10.00" data-bind="value: $view.donation_amount" size="6")
+
+						.form-input-control
+							%ul.select-list.input-large
+								%li.select-list-item(data-bind="css: {'selected': $view.is_frequency_once}, click: $view.setFrequencyToOnce")<> Once
+								%li.select-list-item(data-bind="css: {'selected': $view.is_frequency_weekly}, click: $view.setFrequencyToWeekly")<> Weekly
+
+					-ko("if: $view.is_showing_new_credit_card") do
+						.form-input
+							%label.form-input-label.input-label-large
+								On Credit Card:
+						
+						-ko("view: $view.credit_card_widget")
+
+					-ko("ifnot: $view.is_showing_new_credit_card") do
+						.form-input.input-inline(data-bind="with: $view.current_user")
+							%label.form-input-label.input-label-large
+								On
+								.highlight(data-bind="text: card_type")
+								card ending in
+								.highlight(data-bind="text: card_last_4")
+							.form-input-control
+								.btn(data-bind="click: $view.showNewCreditCard")
+									Change
+
+					.form-input.input-inline.full
+						%label.form-input-label.input-label-large
+							And would like to say:
+							%small (Optional)
+						.form-input-control
+							%textarea.input-block.input-large(placeholder="Write your message here..." data-bind="value: $view.donation_message")
+					.form-input.input-inline.input-small
+						%label.form-input-label.input-label-large
+							Keep this donation anonymous?
+						.form-input-control
+							%ul.select-list
+								%li.select-list-item(data-bind="css: {'selected': $view.is_donation_anonymous}, click: $view.setIsAnonymous")<> Yes
+								%li.select-list-item(data-bind="css: {'selected': !$view.is_donation_anonymous()}, click: $view.setIsntAnonymous")<> No
+
+
+					.form-actions
+						%button.btn.btn-large.pull-left(data-bind="click: $view.cancelDonation, disable: $view.is_saving")
+							Cancel
+
+						%input.btn.btn-large.btn-primary.pull-right(type="submit" value="Donate" data-bind="click: $view.createDonation, disable: $view.is_saving")
+
 %template#profile-tmpl
 	-ko("if: $view.is_loading") do
 		.loader
@@ -102,13 +197,22 @@
 				%ul.profile-characteristics
 					%li.profile-characteristic
 						%i.ion-ios7-people
-						%span.number(data-bind="text: Helpers.formatNumber(followers_count)")
+						.number(data-bind="text: Helpers.formatNumber(followers_count)")
 						Followers
 
 					%li.profile-characteristic
 						%i.ion-radio-waves
-						%span.number(data-bind="text: Helpers.formatNumber(track_count)")
+						.number(data-bind="text: Helpers.formatNumber(track_count)")
 						Tracks
+
+					-ko("if: country") do
+						%li.profile-characteristic
+							%i.ion-map
+							.text
+								-ko("if: city") do
+									-ko("text: Helpers.concat( city, ', ', country )")
+								-ko("ifnot: city") do
+									-ko("text: country")
 			.profile-content
 				Content Here
 %template#search-tmpl
@@ -123,8 +227,8 @@
 						.artist-avatar
 							%img(data-bind="src: Helpers.resizeImage(avatar_url, 'badge')")
 						.artist-name
-							%strong(data-bind="text: full_name")
-							%small(data-bind="text: username")
+							%strong(data-bind="text: username")
+							%small(data-bind="text: full_name")
 						.artist-stats
 							%i.ion-ios7-people
 							-ko("text: Helpers.formatNumber(followers_count)")
@@ -161,7 +265,7 @@
 		%form.form-standard(data-bind="submit: $view.saveCreditCard, css: {'is_loading': $view.is_saving}")
 			-ko("if: $view.has_credit_card()") do
 				.form-input<>
-					%label.form-input-label Current Credit Card
+					%label.form-input-label.input-label-small Current Credit Card
 					.form-input-text
 						%img(data-bind="src: Helpers.creditCardImageUrl( $view.current_credit_card_type )")
 						%span(data-bind="html: Helpers.concat('****&nbsp; ****&nbsp; ****&nbsp; ', $view.current_credit_card_last_4)")
@@ -169,33 +273,14 @@
 							%i.ion-close
 							Remove
 				.form-divider
-			.form-input<>
-				%label.form-input-label Credit Card Number
-				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_number.is_valid, 'has_error': $view.credit_card_number.has_error}")
-					%input(type="text" placeholder="0123-4567-8910-0000" data-bind="value: $view.credit_card_number, valueUpdate: 'afterkeydown'" maxlength="19")
-					.input-hover(data-bind="text: $view.credit_card_type")
-					.input-help-text.error-only(data-bind="text: $view.credit_card_number.error")
-			
-			.form-input.two-third<>
-				%label.form-input-label Expiration
-				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_expiration.is_valid, 'has_error': $view.credit_card_expiration.has_error}")
-					%input(type="text" placeholder="01/2015" data-bind="value: $view.credit_card_expiration")
-					.input-hover
-					.input-help-text.error-only(data-bind="text: $view.credit_card_expiration.error")
 
-
-			.form-input.third<>
-				%label.form-input-label CVC
-				.form-input-control(data-bind="css: {'is_valid': $view.credit_card_cvc.is_valid, 'has_error': $view.credit_card_cvc.has_error}")
-					%input(type="text" placeholder="123" data-bind="value: $view.credit_card_cvc, valueUpdate: 'afterkeydown'")
-					.input-hover
-					.input-help-text.error-only(data-bind="text: $view.credit_card_cvc.error")
+			-ko("view: $view.credit_card_widget")
 
 			.form-actions
-				%button.btn.pull-left(data-bind="disable: $view.is_saving, click: $view.cancelSaveCreditCard")
+				%button.btn.btn-large.pull-left(data-bind="disable: $view.is_saving, click: $view.cancelSaveCreditCard")
 					%i.ion-close
 					Cancel
-				%button.btn.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")
+				%button.btn.btn-large.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")
 					%i.ion-checkmark
 					Save
 
@@ -203,7 +288,7 @@
 		%form.form-standard(data-bind="submit: $view.saveBankAccount, css: {'is_loading': $view.is_saving}")
 			-ko("if: $view.has_bank_account") do
 				.form-input<>
-					%label.form-input-label Current Bank Account
+					%label.form-input-label.input-label-small Current Bank Account
 					.form-input-text
 						.btn.btn-small.pull-right(data-bind="click: $view.removeBankAccount")
 							%i.ion-close
@@ -215,34 +300,34 @@
 				.form-divider
 			
 			.form-input<>
-				%label.form-input-label Name on Bank Account
+				%label.form-input-label.input-label-small Name on Bank Account
 
 				.form-input-control(data-bind="css: {'is_valid': $view.bank_account_name.is_valid, 'has_error': $view.bank_account_name.has_error}")
-					%input(type="text" placeholder="John Doe" data-bind="value: $view.bank_account_name, valueUpdate: 'afterkeydown'")
+					%input.input-large(type="text" placeholder="John Doe" data-bind="value: $view.bank_account_name, valueUpdate: 'afterkeydown'")
 					.input-hover
 					.input-help-text.error-only(data-bind="text: $view.bank_account_name.error")
 
 			.form-input.half<>
-				%label.form-input-label Bank Routing Number
+				%label.form-input-label.input-label-small Bank Routing Number
 
 				.form-input-control(data-bind="css: {'is_valid': $view.bank_account_routing_number.is_valid, 'has_error': $view.bank_account_routing_number.has_error}")
-					%input(type="text" placeholder="01234567" data-bind="value: $view.bank_account_routing_number, valueUpdate: 'afterkeydown'")
+					%input.input-large(type="text" placeholder="01234567" data-bind="value: $view.bank_account_routing_number, valueUpdate: 'afterkeydown'")
 					.input-hover
 					.input-help-text.error-only(data-bind="text: $view.bank_account_routing_number.error")
 
 			.form-input.half<>
-				%label.form-input-label Bank Account Number
+				%label.form-input-label.input-label-small Bank Account Number
 
 				.form-input-control(data-bind="css: {'is_valid': $view.bank_account_account_number.is_valid, 'has_error': $view.bank_account_account_number.has_error}")
-					%input(type="text" placeholder="0123456789" data-bind="value: $view.bank_account_account_number, valueUpdate: 'afterkeydown'")
+					%input.input-large(type="text" placeholder="0123456789" data-bind="value: $view.bank_account_account_number, valueUpdate: 'afterkeydown'")
 					.input-hover
 					.input-help-text.error-only(data-bind="text: $view.bank_account_account_number.error")
 
 			.form-actions
-				%button.btn.pull-left(data-bind="disable: $view.is_saving, click: $view.cancelSaveBankAccount")
+				%button.btn.btn-large.pull-left(data-bind="disable: $view.is_saving, click: $view.cancelSaveBankAccount")
 					%i.ion-close
 					Cancel
-				%button.btn.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")
+				%button.btn.btn-large.btn-primary.pull-right(type="submit" data-bind="disable: $view.is_saving")
 					%i.ion-checkmark
 					Save
 

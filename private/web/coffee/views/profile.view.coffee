@@ -53,6 +53,8 @@ class ProfileView extends Falcon.View
 	#ENF fetchInformation
 
 	donate: ->
-		Application.showModal()
+		view = new NewDonationView(@user.sc_user)
+		view.on "cancel", -> Application.hideModal()
+		Application.showModal( view )
 	#END donate
 #END ProfileView

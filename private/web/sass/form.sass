@@ -1,21 +1,94 @@
+//TODO Clean this up after finishing donations
 form.is_loading
 	.form-actions
 		background-position: center center
 
 form
+	max-width: 500px
 	padding: 0px
 	margin: 0px
+	text-shadow: 0px 1px 0px $highlight
+
+	.form-input.two-third
+		width: 66.667%
+
+	.form-input.half
+		width: 50.000%
+
+	.form-input.third
+		width: 33.333%
+
+	.form-input.fourth
+		width: 25.000%
+
+	.form-input.full
+		width: 100%
 
 	.form-input
+		display: inline-block
+		width: 100.00%
+		margin-bottom: 15px
+		padding-right: 10px
+		vertical-align: top
+
+		label.form-input-label
+			display: block
+			color: $grey-darkest
+
+		label.form-input-label.input-label-small
+			margin-bottom: 7px
+			font-size: 9px
+			text-transform: uppercase
+			font-weight: 500
+			letter-spacing: .15em
+
+		label.form-input-label.input-label-large
+			font-size: 16px
+			color: $black-lightest
+			font-weight: 400
+
+			small
+				font-size: 14px
+				color: $grey
+				font-style: italic
+
+			.highlight
+				display: inline
+				color: $orange
+				font-weight: 500
+
+		.form-input-control[data-prepend]:before
+			content: attr(data-prepend)
+			position: absolute
+			left: 10px
+			z-index: 2
+			font-weight: 400
+			color: $grey-darkest
+
+		.form-input-control[data-prepend]
+			input
+				padding-left: 22px
+
+			textarea
+				padding-top: 32px
+
 		.form-input-control
 			position: relative
+			overflow: hidden
+			padding-bottom: 4px
+			margin-bottom: -4px
+
+			input, textarea
+				position: static
+				z-index: 1
+				width: 100%
 
 			.input-hover
 				position: absolute
 				display: none
 				z-index: 2
 				top: 5px
-				right: 00px
+				right: 0px
 				height: 20px
 				font-size: 10px
 				text-transform: uppercase
@@ -38,6 +111,7 @@ form
 			border: 7px solid transparent
 			border-bottom-color: $shadow
 
+
 		.input-help-text
 			+border-radius(2px)
 			position: relative
@@ -50,6 +124,7 @@ form
 			background-color: $shadow
 			margin-top: 3px
 			line-height: 14px
+			float: right
 
 		.form-input-control.is_valid,
 		.form-input-control.has_error
@@ -86,63 +161,6 @@ form
 
 		.form-disclaimer
 
-	.form-actions
-		+box-shadow(0px, -1px, 0px, $shadow)
-		border-top: 1px solid $highlight
-		padding: 14px 0px
-		margin-right: 10px
-		margin-top: 15px
-		overflow: hidden
-		background-image: url('/images/loader-tiny.gif')
-		background-position: -1000px -1000px
-		background-repeat: no-repeat
-
-
-form.form-standard
-	max-width: 600px
-	text-shadow: 0px 1px 0px $highlight
-
-	.form-input.two-third
-		width: 66.667%
-
-	.form-input.half
-		width: 50.000%
-
-	.form-input.third
-		width: 33.333%
-
-	.form-input.fourth
-		width: 25.000%
-
-	.form-input
-		display: inline-block
-		width: 100.00%
-		margin-bottom: 15px
-		padding-right: 10px
-		vertical-align: top
-
-		label.form-input-label
-			display: block
-			font-size: 9px 
-			text-transform: uppercase
-			color: $grey-darker
-			font-weight: 500
-			letter-spacing: .15em
-			margin-bottom: 7px
-
-		.form-input-control
-			overflow: hidden
-			padding-bottom: 4px
-			margin-bottom: -4px
-
-			input, textarea
-				position: static
-				z-index: 1
-				width: 100%
-
-			.input-help-text
-				float: right
-
 	.form-input + .form-divider
 		margin-top: 3px
 
@@ -154,9 +172,55 @@ form.form-standard
 		border-bottom: 1px solid $highlight
 		margin: 10px 10px 15px 0px
 
-	.form-spacer.fourth
-		width: 25%
+	.form-actions
+		+box-shadow(0px, -1px, 0px, $shadow)
+		border-top: 1px solid $highlight
+		padding: 14px 10px
+		margin: 15px 0px 0px -10px
+		overflow: hidden
+		background-image: url('/images/loader-tiny.gif')
+		background-position: -1000px -1000px
+		background-repeat: no-repeat
 
-	.form-spacer
-		display: inline-block
+
+
+
+
+
+	// input-inline
+	.form-input.input-inline + .form-input.input-inline.input-small
+		margin-top: -15px
+
+	.form-input.input-inline.input-small
+		line-height: 30px
+		margin-bottom: 15px
+
+		label.form-input-label
+			font-size: 12px
+
+	.form-input.input-inline.align-right
+		text-align: right
+
+	.form-input.input-inline.full
+		label.form-input-label,
+		.form-input-control
+			display: block
+
+	.form-input.input-inline
+		display: block
+		line-height: 40px
+		margin-bottom: 20px
 		width: 100%
+
+		label.form-input-label:last-child,
+		.form-input-control:last-child
+			margin-right: 0px
+
+		label.form-input-label,
+		.form-input-control
+			display: inline-block
+			margin-right: 5px
+			vertical-align: top
+
+	.form-input.input-inline + .form-actions
+		margin-top: 5px

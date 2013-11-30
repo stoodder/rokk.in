@@ -1,5 +1,7 @@
 class SoundCloudCollection extends Falcon.Collection
 
+	'limit': 50
+
 	makeUrl: (type, parent) ->
 		original_base_api_url = Falcon.baseApiUrl
 		Falcon.baseApiUrl = ""
@@ -15,6 +17,7 @@ class SoundCloudCollection extends Falcon.Collection
 	search: (params, options) ->
 		params = {'q': params} if _.isString( params )
 		params = {} unless _.isObject( params )
+		params.limit ?= @limit
 
 		options = {success: options} if _.isFunction( options )
 		options = {} unless _.isObject( options )

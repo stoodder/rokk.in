@@ -57,19 +57,25 @@
 
 			li.profile-characteristic
 				font-weight: 300
-				color: $grey-darker
-				height: 25px
-				line-height: 25px
+				color: mix( $grey, $grey-darker )
+				height: 26px
+				line-height: 28px
 				font-size: 9px
 				overflow: hidden
 				text-transform: uppercase
+				white-space: nowrap
+				text-overflow: ellipsis
 
-				.number, i
+				.number, .text, i
 					display: inline-block
-					height: 25px
-					line-height: 25px
+					height: 26px
+					line-height: 26px
 					vertical-align: top
-					margin-right: 5px
+					text-transform: none
+
+				.text
+					color: mix( $grey-darkest, $grey-darker )
+					font-size: 12px
 
 				.number
 					color: mix( $grey-darkest, $grey-darker )
@@ -78,6 +84,9 @@
 				i
 					color: mix( $grey-lighter, $grey )
 					font-size: 19px
+					width: 17px
+					text-align: center
+					margin-right: 5px
 
 	.profile-content
 		position: absolute

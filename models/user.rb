@@ -91,6 +91,15 @@ class User < Sequel::Model
 			self.save()
 		end
 	end
+
+	def add_funds!(amount)
+		return self if amount <= 0
+
+		self.balance_amount += amount
+		self.save()
+
+		return self
+	end
 	
     include Shield::Model
 	plugin :validation_helpers
@@ -101,12 +110,15 @@ class User < Sequel::Model
 		super
 	end
 
+	def after_create
+		#Attach all open donations to this user
+		Donation.resolve!( self )
+	end
+
 	def validate
 		super
-		
-		validates_presence :full_name
-		validates_presence :soundcloud_id
 
-		validates_unique :soundcloud_id
+		validates_presence :soundcloud_id, :message => "Sound Cloud ID must be present"
+		validates_unique :soundcloud_id, :message => "Sound Cloud ID must be unique"
 	end
 end

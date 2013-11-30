@@ -152,7 +152,9 @@ class ApplicationView extends Falcon.View
 		#END if
 	#END search
 
-	showModal: ->
+	showModal: (view) ->
+		return unless Falcon.isView( view )
+		@modal_view( view )
 		@is_showing_modal( true )
 	#END showModel
 

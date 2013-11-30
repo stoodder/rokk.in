@@ -1,0 +1,70 @@
+%template#new_donation-tmpl
+	.overlay-modal-header
+		%i.ion-heart
+		Donate
+	.overlay-modal-content
+		-ko("if: $view.is_showing_success") do
+			.modal-intro-text
+				Awesome! You've just donated
+				=" "
+				.highlight(data-bind="text: Helpers.formatNumber($view.donation.amount, '$0,0.00')")<>
+				=" to "
+				.highlight(data-bind="text: $view.sc_user.username")<>
+				="."
+		-ko("ifnot: $view.is_showing_success") do
+			.modal-intro-text
+				Great! You're about to donate to
+				=" "
+				.highlight(data-bind="text: $view.sc_user.username")<>
+				="."
+
+			.modal-content-body
+				%form.form-standard(data-bind="submit: $view.createDonation, css: {'is_loading': $view.is_saving}")
+					.form-input.input-inline
+						%label.form-input-label.input-label-large I'd like to donate
+						.form-input-control(data-prepend="$")
+							%input.input-large(type="text" placeholder="10.00" data-bind="value: $view.donation_amount" size="6")
+
+						.form-input-control
+							%ul.select-list.input-large
+								%li.select-list-item(data-bind="css: {'selected': $view.is_frequency_once}, click: $view.setFrequencyToOnce")<> Once
+								%li.select-list-item(data-bind="css: {'selected': $view.is_frequency_weekly}, click: $view.setFrequencyToWeekly")<> Weekly
+
+					-ko("if: $view.is_showing_new_credit_card") do
+						.form-input
+							%label.form-input-label.input-label-large
+								On Credit Card:
+						
+						-ko("view: $view.credit_card_widget")
+
+					-ko("ifnot: $view.is_showing_new_credit_card") do
+						.form-input.input-inline(data-bind="with: $view.current_user")
+							%label.form-input-label.input-label-large
+								On
+								.highlight(data-bind="text: card_type")
+								card ending in
+								.highlight(data-bind="text: card_last_4")
+							.form-input-control
+								.btn(data-bind="click: $view.showNewCreditCard")
+									Change
+
+					.form-input.input-inline.full
+						%label.form-input-label.input-label-large
+							And would like to say:
+							%small (Optional)
+						.form-input-control
+							%textarea.input-block.input-large(placeholder="Write your message here..." data-bind="value: $view.donation_message")
+					.form-input.input-inline.input-small
+						%label.form-input-label.input-label-large
+							Keep this donation anonymous?
+						.form-input-control
+							%ul.select-list
+								%li.select-list-item(data-bind="css: {'selected': $view.is_donation_anonymous}, click: $view.setIsAnonymous")<> Yes
+								%li.select-list-item(data-bind="css: {'selected': !$view.is_donation_anonymous()}, click: $view.setIsntAnonymous")<> No
+
+
+					.form-actions
+						%button.btn.btn-large.pull-left(data-bind="click: $view.cancelDonation, disable: $view.is_saving")
+							Cancel
+
+						%input.btn.btn-large.btn-primary.pull-right(type="submit" value="Donate" data-bind="click: $view.createDonation, disable: $view.is_saving")

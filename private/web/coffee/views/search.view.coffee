@@ -2,8 +2,17 @@ class SearchView extends Falcon.View
 	url: '#search-tmpl'
 
 	defaults:
-		'sc_users': -> new SC_Users
-		'sc_tracks': -> new SC_Tracks
+		'sc_users': ->
+			sc_users = new SC_Users
+			sc_users.limit = 11
+			return sc_users
+		#END sc_users
+
+		'sc_tracks': ->
+			sc_tracks = new SC_Tracks
+			sc_tracks.limit = 25
+			return sc_tracks
+		#END sc_tracks
 	#END defaults
 
 	observables:

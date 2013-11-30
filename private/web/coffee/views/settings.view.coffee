@@ -1,6 +1,10 @@
 class SettingsView extends Falcon.View
 	url: "#settings-tmpl"
 
+	defaults:
+		'credit_card_widget': -> new CreditCardWidget
+	#END defaults
+
 	observables:
 		'alert': ''
 		'is_saving': false
@@ -14,44 +18,6 @@ class SettingsView extends Falcon.View
 		'current_credit_card_type': ''
 		'has_credit_card': -> not _.isEmpty( @current_credit_card_last_4() ) or not _.isEmpty( @current_credit_card_type() )
 
-		'credit_card_type': ''
-		'credit_card_expiration_month': ''
-		'credit_card_expiration_year': ''
-		'credit_card_cvc': ''
-
-		'_credit_card_number': ''
-		'credit_card_number':
-			read: ->  Helpers.formatCreditCardNumber( @_credit_card_number )
-			write: (number) -> @_credit_card_number( number )
-		#END credit_card_number
-
-		'credit_card_expiration':
-			read: ->
-				year = _.trim( ko.unwrap( @credit_card_expiration_year ) ? "" )
-				month = _.trim( ko.unwrap( @credit_card_expiration_month ) ? "" )
-
-				return '' if _.isEmpty( year ) or _.isEmpty( month )
-
-				return "#{month}/#{year}"
-			#END read
-
-			write: (value) ->
-				value = _.trim( value ? "" )
-				[month, year] = value.split("/")
-
-				month = _.trim( month ? "" )
-				year = _.trim( year ? "" )
-
-				year = "20#{year}" if year.length is 2
-				month = "0#{month}" if month.length is 1
-				year = year[0...4]
-				month = month[0...2]
-
-				@credit_card_expiration_month( month )
-				@credit_card_expiration_year( year )
-			#END write
-		#END credit_card_expiration
-
 		'current_bank_name': ""
 		'current_bank_account_number': ""
 		'has_bank_account': -> not _.isEmpty( @current_bank_name() ) or not _.isEmpty( @current_bank_account_number() )
@@ -64,37 +30,9 @@ class SettingsView extends Falcon.View
 	initialize: ->
 		@alert.classify("validateable")
 			
-		@credit_card_number.classify("validateable")
-		@credit_card_expiration.classify("validateable")
-		@credit_card_cvc.classify("validateable")
-			
 		@bank_account_name.classify("validateable")
 		@bank_account_account_number.classify("validateable")
 		@bank_account_routing_number.classify("validateable")
-
-		#Realtime validation of CC Number
-		ko.computed =>
-			number = @credit_card_number()
-			is_valid = balanced.card.isCardNumberValid(number)
-			@credit_card_number.is_valid( is_valid )
-			@credit_card_type( if is_valid then balanced.card.cardType( number ) else "" )
-		#END computed
-
-		#Realtime validation of CC Expiration
-		ko.computed =>
-			@credit_card_expiration()
-			month = @credit_card_expiration_month.peek()
-			year = @credit_card_expiration_year.peek()
-
-			@credit_card_expiration.is_valid( balanced.card.isExpiryValid(month, year) )
-		#END computed
-
-		#Realtime validation of CC Security Code
-		ko.computed =>
-			number = @credit_card_number()
-			cvc = @credit_card_cvc()
-			@credit_card_cvc.is_valid( balanced.card.isSecurityCodeValid(number, cvc) )
-		#END computed
 
 		#Realtime Validation of Bank Account Name
 		ko.computed =>
@@ -164,9 +102,7 @@ class SettingsView extends Falcon.View
 	_resetFields: ->
 		@alert("")
 
-		@credit_card_number("")
-		@credit_card_expiration("")
-		@credit_card_cvc("")
+		@credit_card_widget.resetFields()
 
 		@bank_account_name("")
 		@bank_account_account_number("")
@@ -178,9 +114,7 @@ class SettingsView extends Falcon.View
 	_clearValidations: ->
 		@alert.clearValidations()
 
-		@credit_card_number.clearValidations()
-		@credit_card_expiration.clearValidations()
-		@credit_card_cvc.clearValidations()
+		@credit_card_widget.clearValidations()
 
 		@bank_account_name.clearValidations()
 		@bank_account_account_number.clearValidations()
@@ -188,8 +122,10 @@ class SettingsView extends Falcon.View
 	#END _clearValidations
 
 	_hasError: ->
+		return true if @alert.has_error()
+
 		if @is_showing_credit_card()
-			return ( @credit_card_number.has_error() or @credit_card_expiration.has_error() or @credit_card_cvc.has_error() )
+			return @credit_card_widget.hasError()
 		else if @is_showing_bank_account()
 			return ( @bank_account_routing_number.has_error() or @bank_account_account_number.has_error() or @bank_account_name.has_error() )
 		#END if
@@ -227,25 +163,6 @@ class SettingsView extends Falcon.View
 		return false unless ( current_user = @current_user() ) instanceof User
 		return false if @is_saving()
 
-		@_clearValidations()
-
-		credit_card_number = @credit_card_number()
-		credit_card_expiration = @credit_card_expiration()
-		credit_card_cvc = @credit_card_cvc()
-
-		credit_card_expiration_month = @credit_card_expiration_month()
-		credit_card_expiration_year = @credit_card_expiration_year()
-
-		@credit_card_number.error("Please enter a valid credit card number.") unless balanced.card.isCardNumberValid( credit_card_number )
-		@credit_card_expiration.error("Please enter a valid expiration date.") unless balanced.card.isExpiryValid(credit_card_expiration_month, credit_card_expiration_year)
-		@credit_card_cvc.error("Please enter a valid CVC Number.") unless balanced.card.isSecurityCodeValid(credit_card_number, credit_card_cvc)
-
-		return false if @_hasError()
-
-		@credit_card_number.is_valid(true)
-		@credit_card_expiration.is_valid(true)
-		@credit_card_cvc.is_valid(true)
-
 		@is_saving( true )
 
 		_saveCardToUser = (balanced_card_uri) =>
@@ -262,22 +179,13 @@ class SettingsView extends Falcon.View
 			#END save
 		#END _saveCardToUser
 
-		balanced.card.create {
-			'card_number': credit_card_number
-			'expiration_month': credit_card_expiration_month
-			'expiration_year': credit_card_expiration_year
-			'security_code': credit_card_cvc
-		}, (response) =>
-			switch response.status
-				when 201
-					return _saveCardToUser(response.data.uri)
-				else
-					@alert.error("An error occurred while saving credit card information")
-				#END when
-			#END switch
-
-			@is_saving( false )
-		#END create
+		@credit_card_widget.createCardOnBalanced
+			success: _saveCardToUser
+			error: =>
+				@is_saving( false )
+				@alert.error("An error occurred while saving credit card information")
+			#END error
+		#END createCardOnBalanced
 
 		return false
 	#END saveCreditCard

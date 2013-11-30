@@ -18,12 +18,21 @@
 				%ul.profile-characteristics
 					%li.profile-characteristic
 						%i.ion-ios7-people
-						%span.number(data-bind="text: Helpers.formatNumber(followers_count)")
+						.number(data-bind="text: Helpers.formatNumber(followers_count)")
 						Followers
 
 					%li.profile-characteristic
 						%i.ion-radio-waves
-						%span.number(data-bind="text: Helpers.formatNumber(track_count)")
+						.number(data-bind="text: Helpers.formatNumber(track_count)")
 						Tracks
+
+					-ko("if: country") do
+						%li.profile-characteristic
+							%i.ion-map
+							.text
+								-ko("if: city") do
+									-ko("text: Helpers.concat( city, ', ', country )")
+								-ko("ifnot: city") do
+									-ko("text: country")
 			.profile-content
 				Content Here
